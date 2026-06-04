@@ -1,85 +1,65 @@
-# TalentDash — Software Engineering Compensation Platform
+# 🚀 TalentDash
 
-TalentDash is a high-performance, SEO-optimized, level-aware software engineering salary explorer and comparison dashboard. Built with **Next.js 15 App Router**, **TypeScript Strict Mode**, and **Tailwind CSS v4**, the application uses a **Server-First, Client-Bounded** architecture to deliver static page loads of under 100ms and dynamic table updates with minimal client-side JavaScript.
+TalentDash is an enterprise-grade, high-performance Salary Intelligence platform built to give candidates leverage in their compensation negotiations. It features real-time dynamic filtering, side-by-side offer comparisons, and deep company profile analytics.
 
----
-
-## 🚀 Key Architectural Decisions
-
-1. **Zero-JS-by-Default Data Grid**: The salaries list table (`SalaryTable`) is a React Server Component (RSC). Sorting column links are native `next/link` anchors that update query parameters. The browser receives pre-rendered static HTML, requiring **0 bytes of client JS** to display or sort.
-2. **URL-Driven State single Source of Truth**: Search queries (`company`), filters (`role`, `location`, `level`), sorting (`sortBy`, `sortOrder`), and pagination (`page`) are stored directly in the URL query string. Navigating via back/forward buttons or sharing links preserves the exact UI state immediately.
-3. **Suspense Isolation & Build Optimization**: Interactive controls (`FilterBar`) are declared as client components (`'use client'`) and wrapped in explicit React `<Suspense>` boundaries. This isolates client hooks like `useSearchParams()` from de-optimizing the build-time static page compilation.
-4. **Statically Pre-rendered Company Pages (SSG)**: Individual company dashboards are compiled at build time using `generateStaticParams()`. This allows immediate CDN caching at the edge, delivering instantaneous page transitions.
-5. **Enterprise-Grade SEO & Structured Data**: Inject schema.org `Dataset` JSON-LD metadata for crawlers, canonical links to prevent search indexing parameter duplicate-penalties, and Open Graph attributes for rich social cards.
+**Live Demo**: [https://talentdash-nu.vercel.app](https://talentdash-nu.vercel.app)
 
 ---
 
-## 📂 Folder Structure
+## 🏗 Architecture & Tech Stack
 
-The project strictly follows a clean domain-oriented folder structure:
+This project was built from the ground up using modern React Server Component (RSC) patterns, prioritizing zero client-side JavaScript overhead and instantaneous loading.
 
-```text
-├── app/
-│   ├── layout.tsx                 # Root HTML shell, Geist font variables, global CSS
-│   ├── page.tsx                   # Redirect controller leading immediately to /salaries
-│   ├── salaries/
-│   │   └── page.tsx               # RSC Salaries search page (filters, sorts, and slices data)
-│   ├── companies/
-│   │   └── [slug]/
-│   │       └── page.tsx           # SSG Company detail page (Dynamic median, ranges, distribution)
-│   └── compare/
-│       └── page.tsx               # Side-by-side comparison page wrapper
-├── components/
-│   ├── ui/                        # Pure atomic styles
-│   └── features/                  # Complex layout blocks
-│       ├── navigation.tsx         # Responsive sticky header navigation
-│       ├── footer.tsx             # Standard footer with fixed exchange rate indicators
-│       ├── filter-bar.tsx         # Client input debouncing & query URL synchronizer
-│       ├── salary-table.tsx       # RSC static tabular compensation grid
-│       ├── distribution-bar.tsx   # Stacked level percentages distribution chart
-│       └── compare-container.tsx  # Side-by-side selection comparator matrix
-├── lib/
-│   ├── mock-data.ts               # Core database (65+ records, diverse tech firms, edge cases)
-│   ├── config.ts                  # Exchange rate benchmarks & pagination limits
-│   ├── formatters.ts              # Lakh/Crore formatting and Delta mathematical formatters
-│   └── math.ts                    # Median calculations & level percent range calculators
-└── types/
-    └── index.ts                   # Strict TypeScript schemas, enums, and interfaces
-```
+* **Framework**: Next.js 15 (App Router)
+* **Styling**: Tailwind CSS (with Glassmorphism UI patterns)
+* **Deployment**: Vercel
+* **Language**: TypeScript
 
----
+## ✨ Key Features
 
-## 🛠️ Local Setup & Commands
+1. **URL-Synchronized State Engine**: 
+   Every filter, sort toggle, and currency switch natively syncs with the URL search parameters (`?role=x&location=y`). This allows perfect bookmarking, sharing, and deep-linking without relying on heavy client-side React state hooks.
+2. **Side-by-Side Offer Comparison**:
+   Calculate exact deltas across base salaries, stock options, and bonuses. Includes mathematical winner-highlighting and accurate Indian currency formatting (Lakhs/Crores).
+3. **Dynamic Company Analytics**:
+   Company profiles generate real-time median calculations, compensation ranges, and a custom CSS-grid Level Distribution visualization bar from raw data.
+4. **Zero-JS Data Tables**:
+   The core Salary Table operates entirely as a Server Component, shipping 0 bytes of client-side JavaScript for rendering, sorting, and pagination.
 
-### Prerequisites
-* Node.js 18+
-* npm or yarn
+## ⚡ Performance Highlights (Core Web Vitals)
 
-### Installation
+* **LCP < 2s**: Implemented React `<Suspense>` boundaries to unblock the main UI shell. The server instantly streams the header and navigation while asynchronously resolving URL parameters in the background.
+* **CLS < 0.1**: Designed pixel-perfect `TableSkeleton` and `FilterBarSkeleton` loaders. Reserved physical layout space guarantees zero cumulative layout shift when the data finally streams in.
+* **Optimized Images**: Deployed `next/image` with strict dimensional properties (`width={24} height={24}`) to safely stream external company logos without visual pop-in.
+
+## 🔍 Enterprise SEO
+
+* **Structured Data**: Injects `<script type="application/ld+json">` representing `schema.org/Dataset` on data-heavy pages.
+* **Dynamic Metadata**: Auto-generates unique canonical links, titles, and meta descriptions based on the dynamic route (e.g. `/companies/google` resolves dynamic descriptions).
+* **Open Graph & Twitter Cards**: Highly optimized for social sharing with dynamically injected OG descriptors.
+
+## 🛠 Edge Case Handling
+
+The system is rigorously hardened against realistic compensation data anomalies:
+* **Missing Equity/Bonus Data**: Safely calculates Total Compensation using base salaries while rendering clean em dashes (`—`).
+* **Single-Record Data**: Gracefully prevents division-by-zero errors in distribution bars.
+* **Layout Breakage**: Strict `min-w-0 break-words line-clamp-2` enforcement prevents massive 70+ character company names from blowing out the table grid.
+* **Missing Routes**: A beautifully themed Custom 404 page catches invalid company slugs gracefully.
+
+## 💻 Local Development
+
+Clone the repository and install dependencies:
+
 ```bash
-# Clone the repository and navigate inside
+git clone https://github.com/pushkarrrrrr/talentdash.git
 cd talentdash
-
-# Install package dependencies
 npm install
 ```
 
-### Development
-Starts the Next.js development server with Turbopack compiler tracing:
+Start the development server:
+
 ```bash
 npm run dev
 ```
 
-### Production Build
-Verifies TypeScript strict checks, compiles styling classes, and statically pre-renders all company profile pages:
-```bash
-npm run build
-```
-
----
-
-## 📈 Performance & Core Web Vitals (CWV)
-
-*   **Largest Contentful Paint (LCP)**: Under **1.4 seconds** on simulated 4G mobile devices (achieved via server-rendered HTML blocks and zero-runtime CSS engines).
-*   **Cumulative Layout Shift (CLS)**: **0.00**. Grid cells have explicit sizing and use monospaced text formatting (`font-mono`) to lock dimensions during currency swaps.
-*   **Total Blocking Time (TBT)**: Under **50ms** by delegating all data sorting and slice operations to the edge/server layer.
+Navigate to `http://localhost:3000` to view the platform.
