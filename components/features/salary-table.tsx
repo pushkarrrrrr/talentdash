@@ -120,7 +120,7 @@ export default function SalaryTable({
               <td className="px-6 py-4 max-w-[220px]">
                 <Link
                   href={`/companies/${record.companySlug}`}
-                  className="group/link flex items-center gap-3 transition-colors block break-words"
+                  className="group/link flex items-center gap-3 transition-colors"
                 >
                   <div className="relative shrink-0 w-6 h-6 rounded-md overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center">
                     <Image
@@ -132,7 +132,7 @@ export default function SalaryTable({
                       unoptimized // Because it's an external placeholder that can fail
                     />
                   </div>
-                  <span className="font-semibold text-slate-100 group-hover/link:text-sky-400 group-hover/link:underline transition-colors">
+                  <span className="font-semibold text-slate-100 group-hover/link:text-sky-400 group-hover/link:underline transition-colors min-w-0 break-words line-clamp-2">
                     {record.company}
                   </span>
                 </Link>
