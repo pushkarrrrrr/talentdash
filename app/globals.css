@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+:root {
+  --background: #030712; /* Slate 950 */
+  --foreground: #f8fafc; /* Slate 50 */
+  --border: #1e293b;     /* Slate 800 */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border-custom: var(--border);
+  
+  --font-sans: var(--font-geist-sans), Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+  
+  /* Primary Data Accent Color */
+  --color-data-blue: #0369a1; /* Sky 700 / Data Blue */
+  --color-data-blue-glow: rgba(3, 105, 161, 0.15);
+  
+  /* Custom Levels (as requested) */
+  --color-lvl-l3: #64748b;        /* Slate */
+  --color-lvl-l4: #3b82f6;        /* Blue */
+  --color-lvl-l5: #6366f1;        /* Indigo */
+  --color-lvl-l6: #a855f7;        /* Purple */
+  --color-lvl-principal: #1e3a8a; /* Navy */
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #030712;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Glassmorphism utility card */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-header {
+  background: rgba(3, 7, 18, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
