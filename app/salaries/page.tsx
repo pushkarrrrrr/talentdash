@@ -5,6 +5,7 @@ import { SALARY_DATA } from '@/lib/mock-data';
 import { CONFIG } from '@/lib/config';
 import SalaryTable from '@/components/features/salary-table';
 import FilterBar from '@/components/features/filter-bar';
+import TableSkeleton from '@/components/features/table-skeleton';
 
 interface SearchParamsProps {
   company?: string;
@@ -61,12 +62,64 @@ export async function generateMetadata({
   };
 }
 
-export default async function SalariesPage({
+export default function SalariesPage({
   searchParams,
 }: {
   searchParams: Promise<SearchParamsProps>;
 }) {
-  const resolvedParams = await searchParams;
+  // Build JSON-LD structured data for Google Search (Dataset schema)
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: 'TalentDash Software Engineering Salaries Dataset',
+    description:
+      'Verified software engineering salaries, base pay, stocks, and bonuses across tech companies in India.',
+    url: 'https://talentdash.com/salaries',
+    creator: {
+      '@type': 'Organization',
+      name: 'TalentDash',
+    },
+    variableMeasured: [
+      'Base Salary',
+      'Stock Compensation',
+      'Total Compensation',
+      'Years of Experience',
+    ],
+  };
+
+  return (
+    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* JSON-LD Rich Snippet script */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
+        }}
+      />
+
+      <div className="mb-8 flex flex-col gap-2">
+        <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent sm:text-4xl">
+          Software Engineer Salaries in India
+        </h1>
+        <p className="text-sm text-slate-400 max-w-2xl">
+          Analyze real-time compensation details from top tech companies. All metrics computed from verified records.
+        </p>
+      </div>
+
+      <Suspense fallback={
+        <div className="flex flex-col gap-6 w-full">
+          <FilterBarSkeleton />
+          <TableSkeleton />
+        </div>
+      }>
+        <SalaryDataWrapper searchParamsPromise={searchParams} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function SalaryDataWrapper({ searchParamsPromise }: { searchParamsPromise: Promise<SearchParamsProps> }) {
+  const resolvedParams = await searchParamsPromise;
 
   // Extract filters
   const companyQuery = resolvedParams.company || '';
@@ -149,58 +202,17 @@ export default async function SalariesPage({
   const uniqueRoles = Array.from(new Set(SALARY_DATA.map((r) => r.role)));
   const uniqueLocations = Array.from(new Set(SALARY_DATA.map((r) => r.location)));
 
-  // Build JSON-LD structured data for Google Search (Dataset schema)
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Dataset',
-    name: 'TalentDash Software Engineering Salaries Dataset',
-    description:
-      'Verified software engineering salaries, base pay, stocks, and bonuses across tech companies in India.',
-    url: 'https://talentdash.com/salaries',
-    creator: {
-      '@type': 'Organization',
-      name: 'TalentDash',
-    },
-    variableMeasured: [
-      'Base Salary',
-      'Stock Compensation',
-      'Total Compensation',
-      'Years of Experience',
-    ],
-  };
-
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      {/* JSON-LD Rich Snippet script */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
-        }}
-      />
-
-      <div className="mb-8 flex flex-col gap-2">
-        <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent sm:text-4xl">
-          Software Engineer Salaries in India
-        </h1>
-        <p className="text-sm text-slate-400 max-w-2xl">
-          Analyze real-time compensation details from top tech companies. All metrics computed from verified records.
-        </p>
+    <>
+      <div className="mb-8 w-full">
+        <FilterBar
+          key={`${resolvedParams.company}-${resolvedParams.role}-${resolvedParams.location}-${resolvedParams.level}-${resolvedParams.currency}`}
+          roles={uniqueRoles}
+          locations={uniqueLocations}
+        />
       </div>
 
-      {/* Filter panel inside a Suspense boundary to prevent build de-optimization */}
-      <div className="mb-8">
-        <Suspense fallback={<FilterBarSkeleton />}>
-          <FilterBar
-            key={`${resolvedParams.company}-${resolvedParams.role}-${resolvedParams.location}-${resolvedParams.level}-${resolvedParams.currency}`}
-            roles={uniqueRoles}
-            locations={uniqueLocations}
-          />
-        </Suspense>
-      </div>
-
-      {/* Table & Pagination Area */}
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 w-full">
         {totalRecords === 0 ? (
           // Empty State
           <div className="glass-panel rounded-2xl p-12 text-center border border-slate-900 flex flex-col items-center justify-center gap-4">
@@ -264,7 +276,7 @@ export default async function SalariesPage({
           </>
         )}
       </div>
-    </div>
+    </>
   );
 }
 

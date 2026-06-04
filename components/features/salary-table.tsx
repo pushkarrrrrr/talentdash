@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { SalaryRecord } from '@/types';
 import { formatCurrency, formatExperience } from '@/lib/formatters';
 
@@ -119,9 +120,21 @@ export default function SalaryTable({
               <td className="px-6 py-4 max-w-[220px]">
                 <Link
                   href={`/companies/${record.companySlug}`}
-                  className="font-semibold text-slate-100 hover:text-sky-400 hover:underline transition-colors block break-words"
+                  className="group/link flex items-center gap-3 transition-colors block break-words"
                 >
-                  {record.company}
+                  <div className="relative shrink-0 w-6 h-6 rounded-md overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center">
+                    <Image
+                      src={`https://logo.clearbit.com/${record.companySlug}.com`}
+                      alt={record.company}
+                      width={24}
+                      height={24}
+                      className="object-cover"
+                      unoptimized // Because it's an external placeholder that can fail
+                    />
+                  </div>
+                  <span className="font-semibold text-slate-100 group-hover/link:text-sky-400 group-hover/link:underline transition-colors">
+                    {record.company}
+                  </span>
                 </Link>
               </td>
               <td className="px-6 py-4 font-medium text-slate-200">{record.role}</td>

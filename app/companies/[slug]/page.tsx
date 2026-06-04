@@ -1,11 +1,14 @@
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { COMPANIES, SALARY_DATA } from '@/lib/mock-data';
 import { calculateMedian, calculateRange } from '@/lib/math';
 import { formatCurrency } from '@/lib/formatters';
 import LevelDistributionBar from '@/components/features/distribution-bar';
 import SalaryTable from '@/components/features/salary-table';
+import TableSkeleton from '@/components/features/table-skeleton';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -53,7 +56,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CompanyPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
-  const resolvedSearchParams = await searchParams;
 
   // Find company profile
   const company = COMPANIES.find((c) => c.slug === slug);
@@ -61,47 +63,8 @@ export default async function CompanyPage({ params, searchParams }: PageProps) {
     notFound();
   }
 
-  // Filter records for this company
   const companyRecords = SALARY_DATA.filter((r) => r.companySlug === slug);
-  const totalComps = companyRecords.map((r) => r.totalCompensation);
-
-  // Compute stats dynamically
   const recordCount = companyRecords.length;
-  const medianTC = calculateMedian(totalComps);
-  const { min: minTC, max: maxTC } = calculateRange(totalComps);
-
-  // Sorting params for the embedded table
-  const sortBy = resolvedSearchParams.sortBy || 'totalCompensation';
-  const sortOrder: 'asc' | 'desc' = resolvedSearchParams.sortOrder === 'asc' ? 'asc' : 'desc';
-  const currency: 'INR' | 'USD' = resolvedSearchParams.currency === 'USD' ? 'USD' : 'INR';
-
-  // Sort company records
-  const sortedRecords = [...companyRecords].sort((a, b) => {
-    let valA = 0;
-    let valB = 0;
-
-    if (sortBy === 'baseSalary') {
-      valA = a.baseSalary;
-      valB = b.baseSalary;
-    } else if (sortBy === 'experienceYears') {
-      valA = a.experienceYears;
-      valB = b.experienceYears;
-    } else {
-      valA = a.totalCompensation;
-      valB = b.totalCompensation;
-    }
-
-    return sortOrder === 'asc' ? valA - valB : valB - valA;
-  });
-
-  // Helper to generate currency switcher hrefs while preserving sorting
-  const getCurrencyHref = (curr: 'INR' | 'USD') => {
-    const params = new URLSearchParams();
-    if (resolvedSearchParams.sortBy) params.set('sortBy', resolvedSearchParams.sortBy);
-    if (resolvedSearchParams.sortOrder) params.set('sortOrder', resolvedSearchParams.sortOrder);
-    params.set('currency', curr);
-    return `/companies/${slug}?${params.toString()}`;
-  };
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -115,16 +78,30 @@ export default async function CompanyPage({ params, searchParams }: PageProps) {
         </Link>
       </div>
 
-      {/* Header Profile Section */}
+      {/* Header Profile Section - No searchParams dependency, streams immediately */}
       <div className="glass-panel rounded-2xl p-6 md:p-8 mb-8 border border-slate-900 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
-              {company.name}
-            </h1>
-            <span className="text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2.5 py-0.5 rounded-full capitalize">
-              {company.industry}
-            </span>
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="shrink-0 w-12 h-12 relative rounded-xl overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center">
+              <Image
+                src={`https://logo.clearbit.com/${slug}.com`}
+                alt={company.name}
+                width={48}
+                height={48}
+                className="object-cover"
+                unoptimized
+              />
+            </div>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3">
+                <h1 className="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
+                  {company.name}
+                </h1>
+                <span className="text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2.5 py-0.5 rounded-full capitalize">
+                  {company.industry}
+                </span>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-2 mt-2 text-xs text-slate-400">
@@ -158,6 +135,71 @@ export default async function CompanyPage({ params, searchParams }: PageProps) {
         </div>
       </div>
 
+      <Suspense fallback={<CompanyDynamicSkeleton />}>
+        <CompanyDynamicContent 
+          company={company} 
+          slug={slug} 
+          searchParamsPromise={searchParams} 
+          companyRecords={companyRecords} 
+        />
+      </Suspense>
+    </div>
+  );
+}
+
+// The dynamic portion of the page that waits for searchParams (currency selection, sorting)
+async function CompanyDynamicContent({
+  company,
+  slug,
+  searchParamsPromise,
+  companyRecords,
+}: {
+  company: any;
+  slug: string;
+  searchParamsPromise: Promise<{ sortBy?: string; sortOrder?: 'asc' | 'desc'; currency?: 'INR' | 'USD' }>;
+  companyRecords: any[];
+}) {
+  const resolvedSearchParams = await searchParamsPromise;
+
+  const totalComps = companyRecords.map((r) => r.totalCompensation);
+  const recordCount = companyRecords.length;
+  const medianTC = calculateMedian(totalComps);
+  const { min: minTC, max: maxTC } = calculateRange(totalComps);
+
+  // Sorting & Currency params
+  const sortBy = resolvedSearchParams.sortBy || 'totalCompensation';
+  const sortOrder: 'asc' | 'desc' = resolvedSearchParams.sortOrder === 'asc' ? 'asc' : 'desc';
+  const currency: 'INR' | 'USD' = resolvedSearchParams.currency === 'USD' ? 'USD' : 'INR';
+
+  // Sort company records
+  const sortedRecords = [...companyRecords].sort((a, b) => {
+    let valA = 0;
+    let valB = 0;
+
+    if (sortBy === 'baseSalary') {
+      valA = a.baseSalary;
+      valB = b.baseSalary;
+    } else if (sortBy === 'experienceYears') {
+      valA = a.experienceYears;
+      valB = b.experienceYears;
+    } else {
+      valA = a.totalCompensation;
+      valB = b.totalCompensation;
+    }
+
+    return sortOrder === 'asc' ? valA - valB : valB - valA;
+  });
+
+  const getCurrencyHref = (curr: 'INR' | 'USD') => {
+    const params = new URLSearchParams();
+    if (resolvedSearchParams.sortBy) params.set('sortBy', resolvedSearchParams.sortBy);
+    if (resolvedSearchParams.sortOrder) params.set('sortOrder', resolvedSearchParams.sortOrder);
+    params.set('currency', curr);
+    return `/companies/${slug}?${params.toString()}`;
+  };
+
+  return (
+    <>
       {/* Compensation Statistics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="glass-panel rounded-2xl p-6 border border-slate-900 flex flex-col gap-2">
@@ -231,6 +273,29 @@ export default async function CompanyPage({ params, searchParams }: PageProps) {
           searchParams={resolvedSearchParams as Record<string, string | string[] | undefined>}
           basePath={`/companies/${slug}`}
         />
+      </div>
+    </>
+  );
+}
+
+// Skeletons to prevent layout shift while searchParams is awaited
+function CompanyDynamicSkeleton() {
+  return (
+    <div className="animate-pulse">
+      {/* Stats Grid Skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="glass-panel rounded-2xl p-6 border border-slate-900 h-[120px] bg-slate-950/40"></div>
+        <div className="glass-panel rounded-2xl p-6 border border-slate-900 h-[120px] bg-slate-950/40"></div>
+        <div className="glass-panel rounded-2xl p-6 border border-slate-900 h-[120px] bg-slate-950/40"></div>
+      </div>
+
+      {/* Level Distribution Skeleton */}
+      <div className="glass-panel rounded-2xl p-6 md:p-8 mb-8 border border-slate-900 h-[140px] bg-slate-950/40"></div>
+
+      {/* Table Skeleton */}
+      <div className="flex flex-col gap-4">
+        <div className="h-4 bg-slate-800 rounded w-1/4 mb-2"></div>
+        <TableSkeleton />
       </div>
     </div>
   );
