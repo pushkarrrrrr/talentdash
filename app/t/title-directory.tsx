@@ -70,7 +70,7 @@ export default function TitleDirectory() {
       <div className="mb-6">
         <Link
           href="/"
-          className="text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors"
+          className="text-xs font-semibold text-muted-text hover:text-deep-text transition-colors"
         >
           <span aria-hidden="true">← </span>Back to Explorer
         </Link>
@@ -81,10 +81,10 @@ export default function TitleDirectory() {
         {/* Main Column */}
         <div className="lg:col-span-2 space-y-8">
           <div>
-            <h1 className="text-4xl font-extrabold text-white tracking-tight sm:text-5xl">
+            <h1 className="text-[36px] font-bold leading-[1.1] text-deep-text tracking-tight">
               Title Directory
             </h1>
-            <p className="text-sm text-slate-400 mt-2">
+            <p className="text-sm text-muted-text mt-2">
               Click on a title to explore salaries. Use the filter field below to query specific tracks.
             </p>
           </div>
@@ -97,12 +97,12 @@ export default function TitleDirectory() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               aria-label="Search titles and categories"
-              className="w-full bg-slate-900/40 hover:bg-slate-900/60 focus:bg-slate-900/80 border border-slate-800/80 focus:border-sky-500/60 rounded-xl px-4 py-3.5 text-sm outline-none transition-all placeholder:text-slate-600 text-slate-200"
+              className="w-full bg-surface hover:bg-hover-surface focus:bg-surface border border-border-custom focus:border-primary-accent/60 rounded-xl px-4 py-3.5 text-sm outline-none transition-all placeholder:text-muted-text/60 text-deep-text"
             />
             {search && (
               <button
                 onClick={() => setSearch('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 text-xs font-bold transition-colors cursor-pointer"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-text hover:text-deep-text text-xs font-bold transition-colors cursor-pointer"
                 aria-label="Clear search"
               >
                 ✕
@@ -112,16 +112,16 @@ export default function TitleDirectory() {
 
           {/* Tech Domains Grid */}
           <div className="space-y-8">
-            <div className="border-b border-slate-900 pb-3 flex items-center gap-2">
+            <div className="border-b border-border-custom pb-3 flex items-center gap-2">
               <span className="text-xl" aria-hidden="true">💻</span>
-              <h2 className="text-2xl font-bold text-white tracking-tight">
+              <h2 className="text-2xl font-bold text-deep-text tracking-tight">
                 Technology
               </h2>
             </div>
 
             {/* Software Engineer Special Hero Box */}
             {(!search || 'software engineer'.includes(search.toLowerCase())) && (
-              <div className="p-4 rounded-xl bg-gradient-to-r from-sky-500/10 to-indigo-500/10 border border-sky-500/20 hover:border-sky-500/30 transition-all shadow-sm">
+              <div className="p-4 rounded-xl bg-gradient-to-r from-primary-accent/5 to-primary-accent/10 border border-primary-accent/15 hover:border-primary-accent/25 transition-all shadow-sm">
                 <Link
                   href="/salaries?role=Software+Engineer"
                   className="flex items-center justify-between group"
@@ -129,15 +129,15 @@ export default function TitleDirectory() {
                   <div className="flex items-center gap-3">
                     <span className="text-2xl select-none" aria-hidden="true">💼</span>
                     <div>
-                      <h3 className="font-extrabold text-slate-100 group-hover:text-sky-400 transition-colors text-base">
+                      <h3 className="font-extrabold text-deep-text group-hover:text-primary-accent transition-colors text-base">
                         Software Engineer
                       </h3>
-                      <p className="text-xs text-slate-400 mt-0.5 font-medium">
+                      <p className="text-xs text-muted-text mt-0.5 font-medium">
                         Primary technology engineering track containing full records.
                       </p>
                     </div>
                   </div>
-                  <span className="text-slate-500 group-hover:text-sky-400 transition-colors text-sm font-bold">
+                  <span className="text-muted-text group-hover:text-primary-accent transition-colors text-sm font-bold">
                     Explore Salaries <span aria-hidden="true">→</span>
                   </span>
                 </Link>
@@ -146,10 +146,10 @@ export default function TitleDirectory() {
 
             {filteredGroups.length === 0 ? (
               /* Empty Search State */
-              <div className="glass-panel rounded-2xl p-16 text-center border border-slate-900 flex flex-col items-center justify-center gap-4">
+              <div className="glass-panel rounded-2xl p-16 text-center border border-border-custom flex flex-col items-center justify-center gap-4">
                 <span className="text-4xl select-none" aria-hidden="true">🛠️</span>
-                <h3 className="text-base font-bold text-slate-200">No matching titles found</h3>
-                <p className="text-xs text-slate-400 max-w-sm">
+                <h3 className="text-[22px] font-semibold text-deep-text">No matching titles found</h3>
+                <p className="text-xs text-muted-text max-w-sm">
                   We couldn&apos;t find any roles matching &quot;{search}&quot;. Try generic searches like DevOps, ML, or Systems.
                 </p>
               </div>
@@ -158,15 +158,15 @@ export default function TitleDirectory() {
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 {filteredGroups.map((group) => (
                   <li key={group.category} className="space-y-2.5">
-                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <h3 className="text-xs font-bold text-muted-text uppercase tracking-wider">
                       {group.category}
                     </h3>
-                    <ul className="space-y-1.5 pl-1.5 border-l border-slate-900">
+                    <ul className="space-y-1.5 pl-1.5 border-l border-border-custom">
                       {group.items.map((item) => (
                         <li key={item}>
                           <Link
                             href={`/salaries?role=${encodeURIComponent(mapSearchQueryRole(item))}`}
-                            className="text-xs font-semibold text-slate-300 hover:text-sky-400 hover:translate-x-1 block transition-all"
+                            className="text-xs font-semibold text-body-text hover:text-primary-accent hover:translate-x-1 block transition-all"
                           >
                             <span aria-hidden="true">📝 </span>{item}
                           </Link>
@@ -182,22 +182,22 @@ export default function TitleDirectory() {
 
         {/* Sidebar Promo Column */}
         <aside aria-label="Job Openings Promotion" className="space-y-6 lg:col-span-1 lg:sticky lg:top-24">
-          <div className="glass-panel border border-slate-900/60 rounded-2xl p-6 flex flex-col gap-4 shadow-xl">
+          <div className="glass-panel border border-border-custom rounded-2xl p-6 flex flex-col gap-4 shadow-xl bg-surface">
             {/* Briefcase icon with gradient back */}
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/20 flex items-center justify-center text-3xl select-none" aria-hidden="true">
+            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-warning/10 to-primary-accent/10 border border-warning/15 flex items-center justify-center text-3xl select-none" aria-hidden="true">
               💼
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-1.5">
+              <h3 className="text-sm font-bold text-deep-text uppercase tracking-wider flex items-center gap-1.5">
                 <span aria-hidden="true">✨</span> NEW: TalentDash Jobs
               </h3>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed font-medium">
+              <p className="text-xs text-body-text mt-2 leading-relaxed font-medium">
                 Find the perfect engineering job. See which companies are hiring that pay what you want, support remote, and work on things you enjoy.
               </p>
             </div>
             <Link
               href="/"
-              className="w-full text-center text-xs font-bold text-slate-200 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 py-3 rounded-xl transition-all shadow-md mt-2"
+              className="w-full text-center text-xs font-bold text-deep-text bg-surface hover:bg-hover-surface border border-border-custom hover:border-border-custom/80 py-3 rounded-xl transition-all shadow-md mt-2"
             >
               View Vetted Jobs
             </Link>

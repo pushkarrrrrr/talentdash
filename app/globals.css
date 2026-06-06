@@ -1,29 +1,51 @@
 @import "tailwindcss";
 
 :root {
-  --background: #030712; /* Slate 950 */
-  --foreground: #f8fafc; /* Slate 50 */
-  --border: #1e293b;     /* Slate 800 */
+  --background: #F7F7F7;       /* App Background: Soft Gray */
+  --foreground: #222222;       /* Deep Text: Airbnb Black */
+  --body-text: #484848;        /* Body Text: Soft Dark Gray */
+  --muted-text: #717171;       /* Muted Text: Neutral Gray */
+  --surface: #FFFFFF;          /* Surface Background: Pure White */
+  --border: #EBEBEB;           /* Border Color: Light Border */
+  --primary-accent: #FF5A5F;   /* Primary Accent: Coral Red */
+  --success: #008A05;          /* Success Green */
+  --warning: #FFB400;          /* Warning Orange */
+  --error: #D93025;            /* Error Red */
+  --hover-surface: #F2F2F2;    /* Hover Surface */
+  --banner-start: #EF4444;     /* Curated Banner Start: Red-500 */
+  --banner-end: #E11D48;       /* Curated Banner End: Rose-600 */
+  --banner-text: #FEE2E2;      /* Curated Banner Text: Red-100 */
+  --banner-text-hover: #FECACA; /* Curated Banner Hover Text: Red-200 */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  
+  --color-primary-accent: var(--primary-accent);
+  --color-deep-text: var(--foreground);
+  --color-body-text: var(--body-text);
+  --color-muted-text: var(--muted-text);
+  --color-surface: var(--surface);
   --color-border-custom: var(--border);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-hover-surface: var(--hover-surface);
+  --color-banner-start: var(--banner-start);
+  --color-banner-end: var(--banner-end);
+  --color-banner-text: var(--banner-text);
+  --color-banner-text-hover: var(--banner-text-hover);
   
-  --font-sans: var(--font-geist-sans), Arial, sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   
-  /* Primary Data Accent Color */
-  --color-data-blue: #0369a1; /* Sky 700 / Data Blue */
-  --color-data-blue-glow: rgba(3, 105, 161, 0.15);
-  
-  /* Custom Levels (as requested) */
-  --color-lvl-l3: #64748b;        /* Slate */
-  --color-lvl-l4: #3b82f6;        /* Blue */
-  --color-lvl-l5: #6366f1;        /* Indigo */
-  --color-lvl-l6: #a855f7;        /* Purple */
-  --color-lvl-principal: #1e3a8a; /* Navy */
+  /* Custom Levels matching requested color systems */
+  --color-lvl-l3: var(--muted-text);
+  --color-lvl-l4: var(--primary-accent);
+  --color-lvl-l5: var(--warning);
+  --color-lvl-l6: var(--error);
+  --color-lvl-principal: var(--foreground);
 }
 
 /* Custom Scrollbar */
@@ -32,39 +54,41 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #030712;
+  background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: var(--border);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: var(--muted-text);
 }
 
 body {
   background-color: var(--background);
-  color: var(--foreground);
+  color: var(--body-text);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 /* Accessible focus outline for keyboard users */
 *:focus-visible {
-  outline: 2px solid #38bdf8 !important; /* sky-400 */
+  outline: 2px solid var(--primary-accent) !important;
   outline-offset: 2px !important;
 }
 
 /* Glassmorphism utility card */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
 }
 
 .glass-header {
-  background: rgba(3, 7, 18, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.01);
 }

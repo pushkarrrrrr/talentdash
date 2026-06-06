@@ -39,13 +39,13 @@ export default function CompanyCard({ company }: CompanyCardProps) {
   };
 
   return (
-    <div className="glass-panel rounded-2xl border border-slate-900/60 p-5 hover:border-sky-500/20 hover:shadow-lg hover:shadow-sky-500/5 transition-all duration-300 flex flex-col justify-between">
+    <div className="glass-panel rounded-2xl border border-border-custom p-5 hover:border-primary-accent/30 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
       <div>
         {/* Top: Logo, Name, Follow */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
             {/* Stylized Logo Initials Box with local SVG overlay */}
-            <div className="h-11 w-11 rounded-xl bg-slate-900 border border-slate-800/80 shadow-sm flex-shrink-0 select-none overflow-hidden relative flex items-center justify-center">
+            <div className="h-11 w-11 rounded-xl bg-hover-surface border border-border-custom shadow-xs flex-shrink-0 select-none overflow-hidden relative flex items-center justify-center">
               {/* Fallback initials with gradient background */}
               <div className={`absolute inset-0 bg-gradient-to-br ${getGradient(company.slug)} flex items-center justify-center font-extrabold text-sm text-white uppercase z-0`}>
                 {company.name.charAt(0)}
@@ -63,7 +63,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
             
             <div className="min-w-0">
               <Link href={`/salaries?company=${encodeURIComponent(company.name)}`}>
-                <h3 className="font-bold text-slate-100 text-sm hover:text-sky-400 transition-colors leading-snug truncate">
+                <h3 className="font-bold text-deep-text text-sm hover:text-primary-accent transition-colors leading-snug truncate">
                   {company.name}
                 </h3>
               </Link>
@@ -71,14 +71,14 @@ export default function CompanyCard({ company }: CompanyCardProps) {
                 {/* Rating Badge */}
                 <div 
                   className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                    rating >= 4.0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
+                    rating >= 4.0 ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
                   }`}
                   aria-label={`Rating: ${rating.toFixed(1)} out of 5 stars`}
                 >
                   <span aria-hidden="true">★</span>
                   <span>{rating.toFixed(1)}</span>
                 </div>
-                <span className="text-[10px] text-slate-500">
+                <span className="text-[10px] text-muted-text">
                   ({reviewsCount >= 1000 ? `${(reviewsCount / 1000).toFixed(1)}k` : reviewsCount} Reviews) • {followersDisplay} Followers
                 </span>
               </div>
@@ -91,8 +91,8 @@ export default function CompanyCard({ company }: CompanyCardProps) {
             aria-label={isFollowing ? `Following ${company.name}` : `Follow ${company.name}`}
             className={`text-[10px] font-bold px-3 py-1.5 rounded-lg border transition-all duration-200 cursor-pointer ${
               isFollowing
-                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                : 'bg-sky-600/10 text-sky-400 border-sky-500/20 hover:bg-sky-600/20'
+                ? 'bg-success/10 text-success border-success/30'
+                : 'bg-primary-accent/10 text-primary-accent border-primary-accent/20 hover:bg-primary-accent/20'
             }`}
           >
             {isFollowing ? 'Following' : 'Follow'}
@@ -100,7 +100,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
         </div>
 
         {/* Company Meta Tags */}
-        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-4 text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-4 text-[10px] text-muted-text font-semibold uppercase tracking-wider">
           <span className="truncate max-w-[130px]" title={company.industry}>
             <span aria-hidden="true">🏢 </span>{company.industry}
           </span>
@@ -113,16 +113,16 @@ export default function CompanyCard({ company }: CompanyCardProps) {
         </div>
 
         {/* Dynamic Compensation Stat Box */}
-        <div className="grid grid-cols-2 gap-3 mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-900/80">
+        <div className="grid grid-cols-2 gap-3 mt-4 p-3 rounded-xl bg-hover-surface border border-border-custom">
           <div>
-            <div className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Avg Salary</div>
-            <div className="text-xs font-bold text-slate-200 mt-0.5">
+            <div className="text-[9px] text-muted-text font-bold uppercase tracking-wider">Avg Salary</div>
+            <div className="text-xs font-bold text-deep-text mt-0.5">
               {recordCount > 0 ? `${formatCurrency(avgTotalComp, 'INR')}` : '—'}
             </div>
           </div>
           <div>
-            <div className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Top Package</div>
-            <div className="text-xs font-bold text-slate-200 mt-0.5">
+            <div className="text-[9px] text-muted-text font-bold uppercase tracking-wider">Top Package</div>
+            <div className="text-xs font-bold text-deep-text mt-0.5">
               {recordCount > 0 ? `${formatCurrency(maxTotalComp, 'INR')}` : '—'}
             </div>
           </div>
@@ -130,8 +130,8 @@ export default function CompanyCard({ company }: CompanyCardProps) {
       </div>
 
       {/* Footer Actions */}
-      <div className="mt-5 pt-3 border-t border-slate-900/60 flex items-center justify-between gap-2 text-xs">
-        <span className="text-[10px] text-slate-500 font-medium">
+      <div className="mt-5 pt-3 border-t border-border-custom flex items-center justify-between gap-2 text-xs">
+        <span className="text-[10px] text-muted-text font-medium">
           {recordCount} Verified Comp Records
         </span>
         
@@ -140,7 +140,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
           <Link
             href={`/compare?c1=${encodeURIComponent(company.slug)}`}
             aria-label={`Compare ${company.name}`}
-            className="text-[10px] font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-800/30 border border-slate-800/60 px-2 py-1 rounded transition-colors"
+            className="text-[10px] font-bold text-muted-text hover:text-deep-text hover:bg-hover-surface border border-border-custom px-2 py-1 rounded transition-colors"
           >
             Compare
           </Link>
@@ -148,7 +148,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
           <Link
             href={`/salaries?company=${encodeURIComponent(company.name)}`}
             aria-label={`View ${company.name} salaries`}
-            className="text-[10px] font-bold text-sky-400 hover:text-sky-300"
+            className="text-[10px] font-bold text-primary-accent hover:opacity-90"
           >
             View Salaries <span aria-hidden="true">→</span>
           </Link>

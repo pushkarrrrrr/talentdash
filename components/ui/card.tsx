@@ -5,8 +5,8 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Card({ glass = true, className = '', children, ...props }: CardProps) {
-  const baseStyles = 'rounded-2xl border border-slate-900 shadow-xl';
-  const glassStyles = glass ? 'glass-panel' : 'bg-slate-950';
+  const baseStyles = 'rounded-2xl border border-border-custom/80 shadow-xs';
+  const glassStyles = glass ? 'glass-panel' : 'bg-surface';
 
   return (
     <div className={`${baseStyles} ${glassStyles} ${className}`} {...props}>

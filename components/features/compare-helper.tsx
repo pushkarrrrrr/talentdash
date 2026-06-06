@@ -27,12 +27,12 @@ export default function FloatingCompareHelper() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 max-w-sm w-[340px] glass-panel border border-amber-500/20 rounded-2xl p-4 shadow-2xl shadow-amber-500/5 animate-in slide-in-from-bottom-8 duration-300">
+    <div className="fixed bottom-6 right-6 z-40 max-w-sm w-[340px] glass-panel border border-primary-accent/20 rounded-2xl p-4 shadow-xl shadow-primary-accent/5 animate-in slide-in-from-bottom-8 duration-300">
       <div className="relative flex items-start gap-3.5 pr-6">
         {/* Close Button */}
         <button
           onClick={handleDismiss}
-          className="absolute top-0 right-0 p-0.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-900/60 transition-colors cursor-pointer"
+          className="absolute top-0 right-0 p-0.5 rounded-lg text-muted-text hover:text-deep-text hover:bg-hover-surface transition-colors cursor-pointer"
           aria-label="Dismiss notice"
           title="Dismiss notice"
         >
@@ -40,21 +40,21 @@ export default function FloatingCompareHelper() {
         </button>
 
         {/* Emoji illustration */}
-        <div className="h-11 w-11 flex-shrink-0 rounded-xl bg-amber-500/10 flex items-center justify-center text-2xl border border-amber-500/20 select-none animate-bounce" aria-hidden="true">
+        <div className="h-11 w-11 flex-shrink-0 rounded-xl bg-warning/10 flex items-center justify-center text-2xl border border-warning/20 select-none animate-bounce" aria-hidden="true">
           🤔
         </div>
 
         <div className="flex-1 space-y-2">
-          <h4 className="font-bold text-slate-100 text-xs uppercase tracking-wider">
+          <h4 className="font-bold text-deep-text text-xs uppercase tracking-wider">
             Compare Companies
           </h4>
-          <p className="text-xs text-slate-400 leading-relaxed font-semibold">
+          <p className="text-xs text-body-text leading-relaxed font-semibold">
             Confused about which company pays better or has a better culture?
           </p>
           <div className="pt-1">
             <Link
               href="/compare"
-              className="inline-flex items-center justify-center text-[10px] font-bold text-slate-950 bg-amber-500 hover:bg-amber-400 px-3.5 py-2 rounded-lg transition-colors shadow-md shadow-amber-500/10"
+              className="inline-flex items-center justify-center text-[10px] font-bold text-white bg-primary-accent hover:opacity-90 px-3.5 py-2 rounded-lg transition-colors shadow-sm"
             >
               Compare Offer Comp Now
             </Link>

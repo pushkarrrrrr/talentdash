@@ -21,14 +21,14 @@ export default function SortSelector() {
 
   return (
     <div className="flex items-center gap-2 text-xs">
-      <label htmlFor="sort-dropdown" className="text-slate-500 font-semibold uppercase tracking-wider">
+      <label htmlFor="sort-dropdown" className="text-muted-text font-semibold uppercase tracking-wider">
         Sort By:
       </label>
       <select
         id="sort-dropdown"
         value={currentSort}
         onChange={(e) => handleSortChange(e.target.value)}
-        className="bg-slate-900/60 hover:bg-slate-900/80 border border-slate-800/80 rounded-lg px-3 py-1.5 outline-none transition-all text-slate-200 font-semibold cursor-pointer"
+        className="bg-surface hover:bg-hover-surface/50 border border-border-custom focus:border-primary-accent/60 rounded-lg px-3 py-1.5 outline-none transition-all text-body-text font-semibold cursor-pointer"
       >
         <option value="popular">Popular (Salary Records)</option>
         <option value="rating">Student/Employee Rating</option>

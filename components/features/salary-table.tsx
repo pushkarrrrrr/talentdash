@@ -53,17 +53,17 @@ export default function SalaryTable({
   function getLevelBadgeStyles(level: string) {
     switch (level) {
       case 'L3':
-        return 'bg-slate-500/10 text-slate-300 border border-slate-500/20';
+        return 'bg-muted-text/10 text-muted-text border border-muted-text/15';
       case 'L4':
-        return 'bg-blue-500/10 text-blue-300 border border-blue-500/20';
+        return 'bg-primary-accent/10 text-primary-accent border border-primary-accent/15';
       case 'L5':
-        return 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/20';
+        return 'bg-warning/10 text-warning border border-warning/15';
       case 'L6':
-        return 'bg-purple-500/10 text-purple-300 border border-purple-500/20';
+        return 'bg-error/10 text-error border border-error/15';
       case 'Principal':
-        return 'bg-[#0f1b3c] text-sky-300 border border-sky-500/20'; // Navy theme
+        return 'bg-deep-text/10 text-deep-text border border-deep-text/15';
       default:
-        return 'bg-zinc-500/10 text-zinc-300 border border-zinc-500/20';
+        return 'bg-muted-text/10 text-muted-text border border-muted-text/15';
     }
   }
 
@@ -71,25 +71,25 @@ export default function SalaryTable({
   function renderSortIndicator(field: string) {
     if (sortBy !== field) {
       return (
-        <span className="ml-1 text-slate-600 group-hover:text-slate-400 transition-colors">
+        <span className="ml-1 text-muted-text/60 group-hover:text-deep-text transition-colors">
           ↕
         </span>
       );
     }
     return (
-      <span className="ml-1 text-sky-400 font-bold">
+      <span className="ml-1 text-primary-accent font-bold">
         {sortOrder === 'asc' ? '↑' : '↓'}
       </span>
     );
   }
 
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-slate-900 bg-slate-950/40 backdrop-blur-sm">
-      <table className="w-full min-w-[900px] border-collapse text-left text-sm text-slate-300">
+    <div className="w-full overflow-x-auto rounded-xl border border-border-custom bg-surface">
+      <table className="w-full min-w-[900px] border-collapse text-left text-sm text-body-text">
         <caption className="sr-only">
           Verified technology salary packages showing company, designation role, level, metro location, years of experience, base salary package, stock options, and total compensation.
         </caption>
-        <thead className="border-b border-slate-900 bg-slate-950/80 text-xs font-semibold uppercase tracking-wider text-slate-400">
+        <thead className="border-b border-border-custom bg-hover-surface/85 text-xs font-semibold uppercase tracking-wider text-muted-text">
           <tr>
             <th scope="col" className="px-6 py-4">Company</th>
             <th scope="col" className="px-6 py-4">Role</th>
@@ -100,7 +100,7 @@ export default function SalaryTable({
               className="px-6 py-4"
               aria-sort={sortBy === 'experienceYears' ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
             >
-              <Link href={getSortHref('experienceYears')} className="group flex items-center hover:text-slate-200 transition-colors">
+              <Link href={getSortHref('experienceYears')} className="group flex items-center hover:text-deep-text transition-colors">
                 Experience {renderSortIndicator('experienceYears')}
               </Link>
             </th>
@@ -109,7 +109,7 @@ export default function SalaryTable({
               className="px-6 py-4"
               aria-sort={sortBy === 'baseSalary' ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
             >
-              <Link href={getSortHref('baseSalary')} className="group flex items-center hover:text-slate-200 transition-colors">
+              <Link href={getSortHref('baseSalary')} className="group flex items-center hover:text-deep-text transition-colors">
                 Base Salary {renderSortIndicator('baseSalary')}
               </Link>
             </th>
@@ -119,17 +119,17 @@ export default function SalaryTable({
               className="px-6 py-4"
               aria-sort={sortBy === 'totalCompensation' ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
             >
-              <Link href={getSortHref('totalCompensation')} className="group flex items-center hover:text-slate-200 transition-colors">
+              <Link href={getSortHref('totalCompensation')} className="group flex items-center hover:text-deep-text transition-colors">
                 Total Comp {renderSortIndicator('totalCompensation')}
               </Link>
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-900/60 bg-slate-950/20">
+        <tbody className="divide-y divide-border-custom bg-surface">
           {records.map((record) => (
             <tr
               key={record.id}
-              className="hover:bg-slate-900/35 transition-colors duration-150 group"
+              className="hover:bg-hover-surface/70 transition-colors duration-150 group"
             >
               {/* Company cell supporting very long names */}
               <td className="px-6 py-4 max-w-[220px]">
@@ -137,7 +137,7 @@ export default function SalaryTable({
                   href={`/companies/${record.companySlug}`}
                   className="group/link flex items-center gap-3 transition-colors"
                 >
-                  <div className="relative shrink-0 w-6 h-6 rounded-md overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center">
+                  <div className="relative shrink-0 w-6 h-6 rounded-md overflow-hidden bg-hover-surface border border-border-custom flex items-center justify-center">
                     <CompanyLogo
                       companySlug={record.companySlug}
                       companyName={record.company}
@@ -145,22 +145,22 @@ export default function SalaryTable({
                       height={24}
                     />
                   </div>
-                  <span className="font-semibold text-slate-100 group-hover/link:text-sky-400 group-hover/link:underline transition-colors min-w-0 break-words line-clamp-2">
+                  <span className="font-semibold text-deep-text group-hover/link:text-primary-accent group-hover/link:underline transition-colors min-w-0 break-words line-clamp-2">
                     {record.company}
                   </span>
                 </Link>
               </td>
-              <td className="px-6 py-4 font-medium text-slate-200">{record.role}</td>
+              <td className="px-6 py-4 font-medium text-deep-text">{record.role}</td>
               <td className="px-6 py-4">
                 <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getLevelBadgeStyles(record.level)}`}>
                   {record.level}
                 </span>
               </td>
-              <td className="px-6 py-4 text-slate-400 capitalize">{record.location}</td>
+              <td className="px-6 py-4 text-muted-text capitalize">{record.location}</td>
               <td className="px-6 py-4 font-mono">{formatExperience(record.experienceYears)}</td>
               <td className="px-6 py-4 font-mono">{formatCurrency(record.baseSalary, currency)}</td>
-              <td className="px-6 py-4 font-mono text-slate-400">{formatCurrency(record.stock, currency)}</td>
-              <td className="px-6 py-4 font-mono text-base font-bold text-[#0369A1] group-hover:text-sky-400 transition-colors">
+              <td className="px-6 py-4 font-mono text-muted-text">{formatCurrency(record.stock, currency)}</td>
+              <td className="px-6 py-4 font-mono text-base font-bold text-primary-accent transition-colors">
                 {formatCurrency(record.totalCompensation, currency)}
               </td>
             </tr>

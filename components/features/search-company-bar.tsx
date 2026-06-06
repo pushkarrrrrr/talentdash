@@ -44,7 +44,7 @@ export default function SearchCompanyBar() {
 
   return (
     <div className="relative w-full">
-      <span className={`absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm transition-all duration-300 ${isPending ? 'opacity-40 scale-90 animate-pulse' : 'opacity-100'}`} aria-hidden="true">
+      <span className={`absolute left-4 top-1/2 -translate-y-1/2 text-muted-text text-sm transition-all duration-300 ${isPending ? 'opacity-40 scale-90 animate-pulse' : 'opacity-100'}`} aria-hidden="true">
         🔍
       </span>
       <input
@@ -53,12 +53,12 @@ export default function SearchCompanyBar() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         aria-label="Search designation, company name, or industry"
-        className="w-full bg-slate-900/40 hover:bg-slate-900/60 focus:bg-slate-900/80 border border-slate-800/80 focus:border-sky-500/60 rounded-2xl pl-11 pr-10 py-3 text-sm outline-none transition-all placeholder:text-slate-600 text-slate-200"
+        className="w-full bg-surface hover:bg-hover-surface/50 focus:bg-surface border border-border-custom focus:border-primary-accent/60 rounded-2xl pl-11 pr-10 py-3 text-sm outline-none transition-all placeholder:text-muted-text text-deep-text shadow-xs"
       />
       {query && (
         <button
           onClick={() => setQuery('')}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 text-xs font-bold transition-colors cursor-pointer"
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-text hover:text-deep-text text-xs font-bold transition-colors cursor-pointer"
           aria-label="Clear search"
         >
           ✕

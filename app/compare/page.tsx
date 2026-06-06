@@ -21,10 +21,10 @@ export default function ComparePage() {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8 flex flex-col gap-2">
-        <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent sm:text-4xl">
+        <h1 className="text-[36px] font-bold leading-[1.1] text-deep-text tracking-tight">
           Compare Compensation Offers
         </h1>
-        <p className="text-sm text-slate-400 max-w-2xl">
+        <p className="text-sm text-muted-text max-w-2xl">
           Evaluate offer details side-by-side and calculate precise compensation deltas to power your salary negotiations.
         </p>
       </div>
@@ -39,9 +39,9 @@ export default function ComparePage() {
 function CompareSkeleton() {
   return (
     <div className="w-full animate-pulse flex flex-col gap-8">
-      <div className="h-28 bg-slate-900 rounded-2xl"></div>
-      <div className="h-6 w-1/3 bg-slate-900 rounded-xl"></div>
-      <div className="h-96 bg-slate-900 rounded-2xl"></div>
+      <div className="h-28 bg-hover-surface border border-border-custom rounded-2xl"></div>
+      <div className="h-6 w-1/3 bg-hover-surface border border-border-custom rounded-xl"></div>
+      <div className="h-96 bg-hover-surface border border-border-custom rounded-2xl"></div>
     </div>
   );
 }

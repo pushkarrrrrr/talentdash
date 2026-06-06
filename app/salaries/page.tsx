@@ -100,10 +100,10 @@ export default function SalariesPage({
       />
 
       <div className="mb-8 flex flex-col gap-2">
-        <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent sm:text-4xl">
+        <h1 className="text-[36px] font-bold leading-[1.1] text-deep-text tracking-tight">
           Software Engineer Salaries in India
         </h1>
-        <p className="text-sm text-slate-400 max-w-2xl">
+        <p className="text-sm text-muted-text max-w-2xl">
           Analyze real-time compensation details from top tech companies. All metrics computed from verified records.
         </p>
       </div>
@@ -216,15 +216,15 @@ async function SalaryDataWrapper({ searchParamsPromise }: { searchParamsPromise:
       <div className="flex flex-col gap-6 w-full">
         {totalRecords === 0 ? (
           // Empty State
-          <div className="glass-panel rounded-2xl p-12 text-center border border-slate-900 flex flex-col items-center justify-center gap-4">
+          <div className="glass-panel rounded-2xl p-12 text-center border border-border-custom flex flex-col items-center justify-center gap-4">
             <span className="text-4xl">🔍</span>
-            <h3 className="text-lg font-semibold text-slate-200">No records found</h3>
-            <p className="text-sm text-slate-400 max-w-md">
+            <h3 className="text-[22px] font-semibold text-deep-text">No records found</h3>
+            <p className="text-sm text-muted-text max-w-md">
               No records found for these filters. Try removing a filter.
             </p>
             <Link
               href="/salaries"
-              className="mt-2 text-xs font-semibold text-sky-400 hover:text-sky-300 border border-sky-500/20 bg-sky-500/5 px-4 py-2 rounded-lg transition-all"
+              className="mt-2 text-xs font-semibold text-primary-accent hover:text-primary-accent/80 border border-primary-accent/20 bg-primary-accent/5 px-4 py-2 rounded-lg transition-all"
             >
               Reset All Filters
             </Link>
@@ -232,13 +232,13 @@ async function SalaryDataWrapper({ searchParamsPromise }: { searchParamsPromise:
         ) : (
           <>
             {/* Header info bar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400 px-1">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-text px-1">
               <div>
-                Showing <span className="font-semibold text-slate-200">{recordStart}–{recordEnd}</span> of{' '}
-                <span className="font-semibold text-slate-200">{totalRecords}</span> records
+                Showing <span className="font-semibold text-deep-text">{recordStart}–{recordEnd}</span> of{' '}
+                <span className="font-semibold text-deep-text">{totalRecords}</span> records
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span className="inline-block w-2 h-2 rounded-full bg-success animate-pulse"></span>
                 <span>Fixed conversion rate: ₹1 = $0.012 USD</span>
               </div>
             </div>
@@ -254,7 +254,7 @@ async function SalaryDataWrapper({ searchParamsPromise }: { searchParamsPromise:
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-slate-900 pt-6">
+              <div className="flex items-center justify-between border-t border-border-custom pt-6">
                 <PaginationButton
                   direction="prev"
                   page={currentPage - 1}
@@ -262,8 +262,8 @@ async function SalaryDataWrapper({ searchParamsPromise }: { searchParamsPromise:
                   searchParams={resolvedParams}
                 />
                 
-                <span className="text-xs text-slate-400 font-medium">
-                  Page <span className="text-slate-200">{currentPage}</span> of {totalPages}
+                <span className="text-xs text-muted-text font-medium">
+                  Page <span className="text-deep-text">{currentPage}</span> of {totalPages}
                 </span>
 
                 <PaginationButton
@@ -295,7 +295,7 @@ function PaginationButton({
 }) {
   if (disabled) {
     return (
-      <span className="text-xs font-semibold text-slate-600 bg-slate-950/20 border border-slate-900/50 px-4 py-2 rounded-lg cursor-not-allowed select-none">
+      <span className="text-xs font-semibold text-muted-text bg-hover-surface/50 border border-border-custom px-4 py-2 rounded-lg cursor-not-allowed select-none">
         {direction === 'prev' ? (
           <>
             <span aria-hidden="true">← </span>Previous
@@ -325,7 +325,7 @@ function PaginationButton({
   return (
     <Link
       href={`/salaries?${params.toString()}`}
-      className="text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 bg-slate-900/40 hover:bg-slate-900/80 px-4 py-2 rounded-lg transition-all"
+      className="text-xs font-semibold text-body-text hover:text-deep-text border border-border-custom hover:border-border-custom/80 bg-surface hover:bg-hover-surface px-4 py-2 rounded-lg transition-all"
     >
       {direction === 'prev' ? (
         <>
@@ -343,14 +343,14 @@ function PaginationButton({
 // Skeleton fallback loader for FilterBar
 function FilterBarSkeleton() {
   return (
-    <div className="w-full bg-slate-950/40 border border-slate-900 rounded-2xl p-6 h-48 animate-pulse flex flex-col gap-6">
+    <div className="w-full bg-surface border border-border-custom rounded-2xl p-6 h-48 animate-pulse flex flex-col gap-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="h-10 bg-slate-900 rounded-xl"></div>
-        <div className="h-10 bg-slate-900 rounded-xl"></div>
-        <div className="h-10 bg-slate-900 rounded-xl"></div>
-        <div className="h-10 bg-slate-900 rounded-xl"></div>
+        <div className="h-10 bg-hover-surface border border-border-custom rounded-xl"></div>
+        <div className="h-10 bg-hover-surface border border-border-custom rounded-xl"></div>
+        <div className="h-10 bg-hover-surface border border-border-custom rounded-xl"></div>
+        <div className="h-10 bg-hover-surface border border-border-custom rounded-xl"></div>
       </div>
-      <div className="h-8 bg-slate-900 rounded-xl w-3/4"></div>
+      <div className="h-8 bg-hover-surface border border-border-custom rounded-xl w-3/4"></div>
     </div>
   );
 }

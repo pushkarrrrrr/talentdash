@@ -120,7 +120,7 @@ export default async function CompanyPage({ params, searchParams }: PageProps) {
       <div className="mb-6">
         <Link
           href="/"
-          className="text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors"
+          className="text-xs font-semibold text-muted-text hover:text-deep-text transition-colors"
         >
           <span aria-hidden="true">← </span>Back to Explorer
         </Link>
@@ -281,15 +281,15 @@ async function CompanyDynamicContent({
   return (
     <div className="space-y-8">
       {/* 1. Cover Banner & Logo Header Section */}
-      <div className="relative w-full h-44 sm:h-56 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 overflow-hidden border border-slate-900 rounded-2xl shadow-lg">
+      <div className="relative w-full h-44 sm:h-56 bg-gradient-to-r from-red-500 via-primary-accent to-rose-600 overflow-hidden border border-border-custom rounded-2xl shadow-sm">
         {/* Abstract glowing lights */}
-        <div className="absolute top-0 right-1/4 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute inset-0 bg-slate-950/20 backdrop-blur-[1px]"></div>
+        <div className="absolute top-0 right-1/4 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]"></div>
         
         {/* Logo overlapping the bottom */}
-        <div className={`w-20 h-20 sm:w-24 sm:h-24 absolute -bottom-10 left-6 sm:left-10 rounded-2xl bg-gradient-to-br ${getGradient(slug)} border-4 border-[#030712] shadow-2xl overflow-hidden flex items-center justify-center`}>
-          <div className="w-full h-full relative flex items-center justify-center bg-slate-950/10">
+        <div className={`w-20 h-20 sm:w-24 sm:h-24 absolute -bottom-10 left-6 sm:left-10 rounded-2xl bg-gradient-to-br ${getGradient(slug)} border-4 border-background shadow-md overflow-hidden flex items-center justify-center`}>
+          <div className="w-full h-full relative flex items-center justify-center bg-hover-surface">
             <span className="absolute text-xl sm:text-2xl font-extrabold text-white select-none uppercase z-0">
               {company.name.charAt(0)}
             </span>
@@ -306,43 +306,43 @@ async function CompanyDynamicContent({
       </div>
 
       {/* 2. Profile Details & Horizontal Navigation Tabs */}
-      <div className="pt-10 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-900/60">
+      <div className="pt-10 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border-custom">
         <div className="space-y-2">
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
+            <h1 className="text-[36px] font-bold leading-[1.1] text-deep-text tracking-tight">
               {company.name}
             </h1>
-            <span className="text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2.5 py-0.5 rounded-full capitalize">
+            <span className="text-xs font-semibold bg-primary-accent/10 text-primary-accent border border-primary-accent/20 px-2.5 py-0.5 rounded-full capitalize">
               {company.industry}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1 mt-2 text-xs text-slate-400">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1 mt-2 text-xs text-muted-text">
             <div>
               Headquarters:{' '}
-              <span className="font-semibold text-slate-200">{company.headquarters}</span>
+              <span className="font-semibold text-deep-text">{company.headquarters}</span>
             </div>
             <div>
               Headcount:{' '}
-              <span className="font-semibold text-slate-200">{company.headcountRange}</span>
+              <span className="font-semibold text-deep-text">{company.headcountRange}</span>
             </div>
             <div>
               Founded:{' '}
-              <span className="font-semibold text-slate-200">{company.foundingYear}</span>
+              <span className="font-semibold text-deep-text">{company.foundingYear}</span>
             </div>
             <div>
               Total Records:{' '}
-              <span className="font-semibold text-slate-200">{recordCount}</span>
+              <span className="font-semibold text-deep-text">{recordCount}</span>
             </div>
           </div>
         </div>
 
         {/* Navigation Tabs bar */}
-        <div className="flex bg-slate-950 border border-slate-900 rounded-xl p-1 w-full md:w-auto self-start md:self-end">
+        <div className="flex bg-hover-surface border border-border-custom rounded-xl p-1 w-full md:w-auto self-start md:self-end">
           <Link
             href={getTabHref('overview')}
             className={`flex-1 md:flex-none text-center px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
-              tab === 'overview' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+              tab === 'overview' ? 'bg-primary-accent text-white shadow-xs' : 'text-muted-text hover:text-deep-text'
             }`}
           >
             Overview
@@ -350,7 +350,7 @@ async function CompanyDynamicContent({
           <Link
             href={getTabHref('salaries')}
             className={`flex-1 md:flex-none text-center px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
-              tab === 'salaries' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+              tab === 'salaries' ? 'bg-primary-accent text-white shadow-xs' : 'text-muted-text hover:text-deep-text'
             }`}
           >
             Salaries
@@ -358,7 +358,7 @@ async function CompanyDynamicContent({
           <Link
             href={getTabHref('culture')}
             className={`flex-1 md:flex-none text-center px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
-              tab === 'culture' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+              tab === 'culture' ? 'bg-primary-accent text-white shadow-xs' : 'text-muted-text hover:text-deep-text'
             }`}
           >
             Culture & Benefits
@@ -375,14 +375,14 @@ async function CompanyDynamicContent({
             /* OVERVIEW TAB CONTENT */
             <>
               {/* Top Insights Card */}
-              <div className="glass-panel rounded-2xl p-6 border border-slate-900/60">
-                <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <div className="glass-panel rounded-2xl p-6 border border-border-custom">
+                <h3 className="text-sm font-bold text-deep-text uppercase tracking-wider mb-4 flex items-center gap-2">
                   <span aria-hidden="true">💡</span> Top Insights
                 </h3>
                 <div className="space-y-4">
                   {insights.map((insight) => (
-                    <div key={insight.id} className="flex items-start gap-3 text-xs leading-relaxed text-slate-300">
-                      <span className="text-sky-400 mt-0.5 shrink-0 select-none">
+                    <div key={insight.id} className="flex items-start gap-3 text-xs leading-relaxed text-body-text">
+                      <span className="text-primary-accent mt-0.5 shrink-0 select-none">
                         {insight.type === 'signing' && '💰'}
                         {insight.type === 'vesting' && '📈'}
                         {insight.type === 'interview' && '📝'}
@@ -395,43 +395,43 @@ async function CompanyDynamicContent({
               </div>
 
               {/* About Card */}
-              <div className="glass-panel rounded-2xl p-6 border border-slate-900/60">
-                <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <div className="glass-panel rounded-2xl p-6 border border-border-custom">
+                <h3 className="text-sm font-bold text-deep-text uppercase tracking-wider mb-3 flex items-center gap-2">
                   <span aria-hidden="true">🏢</span> About {company.name}
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                <p className="text-xs text-body-text leading-relaxed font-medium">
                   {getAboutText(company)}
                 </p>
               </div>
 
               {/* Salaries Overview Summary Card */}
-              <div className="glass-panel rounded-2xl p-6 border border-slate-900/60 space-y-6">
-                <div className="flex items-center justify-between border-b border-slate-900 pb-3">
-                  <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <div className="glass-panel rounded-2xl p-6 border border-border-custom space-y-6">
+                <div className="flex items-center justify-between border-b border-border-custom pb-3">
+                  <h3 className="text-sm font-bold text-deep-text uppercase tracking-wider flex items-center gap-2">
                     <span aria-hidden="true">📊</span> Compensation Summary
                   </h3>
                   <Link
                     href={getTabHref('salaries')}
-                    className="text-[10px] font-bold text-sky-400 hover:text-sky-300"
+                    className="text-[10px] font-bold text-primary-accent hover:opacity-90"
                   >
                     View All Salaries →
                   </Link>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-slate-950/60 border border-slate-900 p-4 rounded-xl flex flex-col justify-between h-[100px]">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Median Total Comp</span>
-                    <span className="text-2xl font-black text-sky-400">{formatCurrency(medianTC, currency)}</span>
+                  <div className="bg-hover-surface border border-border-custom p-4 rounded-xl flex flex-col justify-between h-[100px]">
+                    <span className="text-[10px] font-bold text-muted-text uppercase tracking-wider">Median Total Comp</span>
+                    <span className="text-[32px] font-bold text-primary-accent">{formatCurrency(medianTC, currency)}</span>
                   </div>
-                  <div className="bg-slate-950/60 border border-slate-900 p-4 rounded-xl flex flex-col justify-between h-[100px]">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Compensation Range</span>
-                    <span className="text-lg font-bold text-slate-200 leading-snug">{formatCurrency(minTC, currency)} - {formatCurrency(maxTC, currency)}</span>
+                  <div className="bg-hover-surface border border-border-custom p-4 rounded-xl flex flex-col justify-between h-[100px]">
+                    <span className="text-[10px] font-bold text-muted-text uppercase tracking-wider">Compensation Range</span>
+                    <span className="text-lg font-bold text-deep-text leading-snug">{formatCurrency(minTC, currency)} - {formatCurrency(maxTC, currency)}</span>
                   </div>
                 </div>
 
                 {/* Micro Level Distribution Preview */}
                 <div className="space-y-2 pt-2">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Level Distribution Preview</span>
+                  <span className="text-[10px] font-bold text-muted-text uppercase tracking-wider">Level Distribution Preview</span>
                   <LevelDistributionBar levels={stats.levels} />
                 </div>
               </div>
@@ -443,26 +443,26 @@ async function CompanyDynamicContent({
             <>
               {/* Stats & Currency controls */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="glass-panel rounded-2xl p-6 border border-slate-900/60 flex flex-col gap-1.5 justify-center">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Median Total Comp</span>
-                  <span className="text-2xl font-extrabold text-sky-400">{formatCurrency(medianTC, currency)}</span>
-                  <span className="text-[9px] text-slate-500 font-semibold">From {recordCount} engineering records</span>
+                <div className="glass-panel rounded-2xl p-6 border border-border-custom flex flex-col gap-1.5 justify-center">
+                  <span className="text-[10px] font-bold text-muted-text uppercase tracking-wider">Median Total Comp</span>
+                  <span className="text-[32px] font-bold text-primary-accent">{formatCurrency(medianTC, currency)}</span>
+                  <span className="text-[9px] text-muted-text font-semibold">From {recordCount} engineering records</span>
                 </div>
-                <div className="glass-panel rounded-2xl p-6 border border-slate-900/60 flex flex-col gap-1.5 justify-center">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Compensation Range</span>
-                  <span className="text-xl font-bold text-slate-200">{formatCurrency(minTC, currency)} - {formatCurrency(maxTC, currency)}</span>
-                  <span className="text-[9px] text-slate-500 font-semibold">Min and max verified values</span>
+                <div className="glass-panel rounded-2xl p-6 border border-border-custom flex flex-col gap-1.5 justify-center">
+                  <span className="text-[10px] font-bold text-muted-text uppercase tracking-wider">Compensation Range</span>
+                  <span className="text-xl font-bold text-deep-text">{formatCurrency(minTC, currency)} - {formatCurrency(maxTC, currency)}</span>
+                  <span className="text-[9px] text-muted-text font-semibold">Min and max verified values</span>
                 </div>
-                <div className="glass-panel rounded-2xl p-4 border border-slate-900/60 flex flex-col gap-2 justify-center">
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 px-1 font-bold">
+                <div className="glass-panel rounded-2xl p-4 border border-border-custom flex flex-col gap-2 justify-center">
+                  <div className="flex items-center justify-between text-[10px] text-muted-text px-1 font-bold">
                     <span>Currency</span>
-                    <span className="text-sky-400 capitalize">{currency}</span>
+                    <span className="text-primary-accent capitalize">{currency}</span>
                   </div>
-                  <div className="flex bg-slate-950 border border-slate-900 rounded-xl p-1 w-full">
+                  <div className="flex bg-hover-surface border border-border-custom rounded-xl p-1 w-full">
                     <Link
                       href={getCurrencyHref('INR')}
                       className={`flex-1 text-center py-1 text-xs font-semibold rounded-lg transition-all ${
-                        currency === 'INR' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+                        currency === 'INR' ? 'bg-primary-accent text-white shadow-xs' : 'text-muted-text hover:text-deep-text'
                       }`}
                     >
                       INR (₹)
@@ -470,7 +470,7 @@ async function CompanyDynamicContent({
                     <Link
                       href={getCurrencyHref('USD')}
                       className={`flex-1 text-center py-1 text-xs font-semibold rounded-lg transition-all ${
-                        currency === 'USD' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+                        currency === 'USD' ? 'bg-primary-accent text-white shadow-xs' : 'text-muted-text hover:text-deep-text'
                       }`}
                     >
                       USD ($)
@@ -480,8 +480,8 @@ async function CompanyDynamicContent({
               </div>
 
               {/* Level Distribution Stacked Bar */}
-              <div className="glass-panel rounded-2xl p-6 border border-slate-900/60">
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">
+              <div className="glass-panel rounded-2xl p-6 border border-border-custom">
+                <h3 className="text-xs font-bold text-muted-text uppercase tracking-wider mb-4">
                   Level Distribution Stacked Bar
                 </h3>
                 <LevelDistributionBar levels={stats.levels} />
@@ -489,7 +489,7 @@ async function CompanyDynamicContent({
 
               {/* Interactive Salaries Table */}
               <div className="flex flex-col gap-4">
-                <h3 className="text-sm font-bold text-slate-200 px-1 uppercase tracking-wider">
+                <h3 className="text-sm font-bold text-deep-text px-1 uppercase tracking-wider">
                   Compensation Records for {company.name}
                 </h3>
                 <SalaryTable
@@ -508,8 +508,8 @@ async function CompanyDynamicContent({
             /* CULTURE & BENEFITS TAB CONTENT */
             <>
               {/* Ratings Scores Card */}
-              <div className="glass-panel rounded-2xl p-6 border border-slate-900/60 space-y-6">
-                <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider border-b border-slate-900 pb-3 flex items-center gap-2">
+              <div className="glass-panel rounded-2xl p-6 border border-border-custom space-y-6">
+                <h3 className="text-sm font-bold text-deep-text uppercase tracking-wider border-b border-border-custom pb-3 flex items-center gap-2">
                   <span aria-hidden="true">⭐</span> Work Culture & Satisfaction
                 </h3>
 
@@ -523,9 +523,9 @@ async function CompanyDynamicContent({
                     { label: 'Management & Leadership', score: ratings.mgmt }
                   ].map((item) => (
                     <div key={item.label} className="space-y-1">
-                      <div className="flex justify-between text-xs font-semibold text-slate-300">
+                      <div className="flex justify-between text-xs font-semibold text-body-text">
                         <span>{item.label}</span>
-                        <span className="text-sky-400">{item.score.toFixed(1)} / 5.0</span>
+                        <span className="text-primary-accent">{item.score.toFixed(1)} / 5.0</span>
                       </div>
                       <div 
                         role="progressbar" 
@@ -533,10 +533,10 @@ async function CompanyDynamicContent({
                         aria-valuemin={0} 
                         aria-valuemax={5} 
                         aria-label={item.label}
-                        className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800"
+                        className="w-full bg-hover-surface rounded-full h-2 overflow-hidden border border-border-custom"
                       >
                         <div
-                          className="bg-gradient-to-r from-sky-500 to-indigo-500 h-2 rounded-full"
+                          className="bg-primary-accent h-2 rounded-full"
                           style={{ width: `${(item.score / 5) * 100}%` }}
                         ></div>
                       </div>
@@ -546,38 +546,38 @@ async function CompanyDynamicContent({
               </div>
 
               {/* Perks Grid */}
-              <div className="glass-panel rounded-2xl p-6 border border-slate-900/60 space-y-4">
-                <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider border-b border-slate-900 pb-3 flex items-center gap-2">
+              <div className="glass-panel rounded-2xl p-6 border border-border-custom space-y-4">
+                <h3 className="text-sm font-bold text-deep-text uppercase tracking-wider border-b border-border-custom pb-3 flex items-center gap-2">
                   <span aria-hidden="true">🎁</span> Perks & Benefits
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold text-slate-300">
-                  <div className="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-start gap-2.5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold text-body-text">
+                  <div className="p-3 bg-hover-surface border border-border-custom rounded-xl flex items-start gap-2.5">
                     <span aria-hidden="true" className="text-lg">🩺</span>
                     <div>
-                      <div>Comprehensive Health Insurance</div>
-                      <div className="text-[10px] text-slate-500 font-medium mt-0.5">Fully covered medical plan for employee and dependents.</div>
+                      <div className="text-deep-text">Comprehensive Health Insurance</div>
+                      <div className="text-[10px] text-muted-text font-medium mt-0.5">Fully covered medical plan for employee and dependents.</div>
                     </div>
                   </div>
-                  <div className="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-start gap-2.5">
+                  <div className="p-3 bg-hover-surface border border-border-custom rounded-xl flex items-start gap-2.5">
                     <span aria-hidden="true" className="text-lg">🍲</span>
                     <div>
-                      <div>Gourmet Cafeteria & Meals</div>
-                      <div className="text-[10px] text-slate-500 font-medium mt-0.5">Free catered lunches, micro-kitchens with healthy snacks.</div>
+                      <div className="text-deep-text">Gourmet Cafeteria & Meals</div>
+                      <div className="text-[10px] text-muted-text font-medium mt-0.5">Free catered lunches, micro-kitchens with healthy snacks.</div>
                     </div>
                   </div>
-                  <div className="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-start gap-2.5">
+                  <div className="p-3 bg-hover-surface border border-border-custom rounded-xl flex items-start gap-2.5">
                     <span aria-hidden="true" className="text-lg">🏡</span>
                     <div>
-                      <div>Flexible Hybrid Model</div>
-                      <div className="text-[10px] text-slate-500 font-medium mt-0.5">3 days in-office, home-office equipment stipend.</div>
+                      <div className="text-deep-text">Flexible Hybrid Model</div>
+                      <div className="text-[10px] text-muted-text font-medium mt-0.5">3 days in-office, home-office equipment stipend.</div>
                     </div>
                   </div>
-                  <div className="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-start gap-2.5">
+                  <div className="p-3 bg-hover-surface border border-border-custom rounded-xl flex items-start gap-2.5">
                     <span aria-hidden="true" className="text-lg">📚</span>
                     <div>
-                      <div>Learning & Dev Allowance</div>
-                      <div className="text-[10px] text-slate-500 font-medium mt-0.5">Annual education allowance for courses, books, and certs.</div>
+                      <div className="text-deep-text">Learning & Dev Allowance</div>
+                      <div className="text-[10px] text-muted-text font-medium mt-0.5">Annual education allowance for courses, books, and certs.</div>
                     </div>
                   </div>
                 </div>
@@ -591,19 +591,19 @@ async function CompanyDynamicContent({
         <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-24">
           
           {/* Featured Jobs */}
-          <div className="glass-panel border border-slate-900/60 rounded-2xl p-5 shadow-xl space-y-4">
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between border-b border-slate-900 pb-2">
+          <div className="glass-panel border border-border-custom rounded-2xl p-5 shadow-xs space-y-4">
+            <h3 className="text-xs font-bold text-muted-text uppercase tracking-wider flex items-center justify-between border-b border-border-custom pb-2">
               <span>Featured Jobs</span>
-              <span className="text-[9px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider select-none">Hiring</span>
+              <span className="text-[9px] bg-primary-accent/10 text-primary-accent border border-primary-accent/20 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider select-none animate-pulse">Hiring</span>
             </h3>
             
             <div className="space-y-3.5">
               {jobs.map((job, idx) => (
-                <div key={idx} className="p-3 bg-slate-950/60 hover:bg-slate-950 border border-slate-900 rounded-xl transition-colors space-y-1.5">
-                  <h4 className="text-xs font-bold text-slate-200 leading-snug hover:text-sky-400 cursor-pointer transition-colors">
+                <div key={idx} className="p-3 bg-hover-surface hover:bg-surface border border-border-custom rounded-xl transition-colors space-y-1.5">
+                  <h4 className="text-xs font-bold text-deep-text leading-snug hover:text-primary-accent cursor-pointer transition-colors">
                     {job.title}
                   </h4>
-                  <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold uppercase">
+                  <div className="flex items-center justify-between text-[10px] text-muted-text font-semibold uppercase">
                     <span>📍 {job.loc}</span>
                     <span>⏱️ {job.exp}</span>
                   </div>
@@ -613,15 +613,15 @@ async function CompanyDynamicContent({
             
             <Link
               href="/"
-              className="block w-full text-center text-xs font-bold text-slate-300 bg-slate-900 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 py-2.5 rounded-xl transition-all"
+              className="block w-full text-center text-xs font-bold text-body-text bg-surface hover:bg-hover-surface border border-border-custom hover:border-muted-text/30 py-2.5 rounded-xl transition-all"
             >
               Search All Openings
             </Link>
           </div>
 
           {/* Related Companies */}
-          <div className="glass-panel border border-slate-900/60 rounded-2xl p-5 shadow-xl space-y-4">
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-900 pb-2">
+          <div className="glass-panel border border-border-custom rounded-2xl p-5 shadow-xs space-y-4">
+            <h3 className="text-xs font-bold text-muted-text uppercase tracking-wider border-b border-border-custom pb-2">
               Related Companies
             </h3>
 
@@ -633,10 +633,10 @@ async function CompanyDynamicContent({
                   <Link
                     key={rel.slug}
                     href={`/companies/${rel.slug}`}
-                    className="flex items-center justify-between p-2.5 hover:bg-slate-900/40 border border-transparent hover:border-slate-900 rounded-xl transition-all group"
+                    className="flex items-center justify-between p-2.5 hover:bg-hover-surface/60 border border-transparent hover:border-border-custom rounded-xl transition-all group"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="h-8 w-8 rounded-lg bg-slate-900 border border-slate-800/80 shadow-sm shrink-0 overflow-hidden relative flex items-center justify-center">
+                      <div className="h-8 w-8 rounded-lg bg-hover-surface border border-border-custom shadow-xs shrink-0 overflow-hidden relative flex items-center justify-center">
                         <div className={`absolute inset-0 bg-gradient-to-br ${getGradient(rel.slug)} flex items-center justify-center font-bold text-xs text-white uppercase z-0`}>
                           {rel.name.charAt(0)}
                         </div>
@@ -650,15 +650,15 @@ async function CompanyDynamicContent({
                         />
                       </div>
                       <div className="min-w-0">
-                        <div className="text-xs font-bold text-slate-300 group-hover:text-sky-400 transition-colors truncate">
+                        <div className="text-xs font-bold text-body-text group-hover:text-primary-accent transition-colors truncate">
                           {rel.name}
                         </div>
-                        <div className="text-[9px] text-slate-500 font-medium">
+                        <div className="text-[9px] text-muted-text font-medium">
                           ★ {relRate.toFixed(1)} • {relRecords.length} Salary records
                         </div>
                       </div>
                     </div>
-                    <span className="text-slate-500 group-hover:text-sky-400 transition-colors text-xs">→</span>
+                    <span className="text-muted-text group-hover:text-primary-accent transition-colors text-xs">→</span>
                   </Link>
                 );
               })}
@@ -666,16 +666,16 @@ async function CompanyDynamicContent({
           </div>
 
           {/* Negotiate offer CTA */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-sky-950/30 to-slate-950 border border-sky-500/20 hover:border-sky-500/30 transition-all flex flex-col gap-3 shadow-lg shadow-indigo-950/5">
-            <h4 className="text-xs font-bold text-slate-100 uppercase tracking-wider flex items-center gap-1.5">
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-red-500/10 via-primary-accent/5 to-surface border border-primary-accent/20 hover:border-primary-accent/30 transition-all flex flex-col gap-3 shadow-xs">
+            <h4 className="text-xs font-bold text-deep-text uppercase tracking-wider flex items-center gap-1.5">
               <span aria-hidden="true">💼</span> Competing Offer?
             </h4>
-            <p className="text-[11px] text-slate-400 leading-relaxed font-semibold">
-              Vetted offer evaluations suggest candidates with competing offers at {company.name} negotiate up to <span className="text-emerald-400">18% higher base salaries</span>.
+            <p className="text-[11px] text-body-text leading-relaxed font-semibold">
+              Vetted offer evaluations suggest candidates with competing offers at {company.name} negotiate up to <span className="text-success font-bold">18% higher base salaries</span>.
             </p>
             <Link
               href="/compare"
-              className="w-full text-center text-xs font-bold text-white bg-sky-600 hover:bg-sky-500 px-4 py-2.5 rounded-xl shadow-lg shadow-sky-500/20 hover:shadow-sky-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+              className="w-full text-center text-xs font-bold text-white bg-primary-accent hover:opacity-95 px-4 py-2.5 rounded-xl shadow-xs hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
             >
               Negotiate Offer Package
             </Link>
@@ -692,24 +692,24 @@ function CompanyDynamicSkeleton() {
   return (
     <div className="animate-pulse space-y-8">
       {/* Cover skeleton */}
-      <div className="w-full h-44 sm:h-56 bg-slate-900 border border-slate-800 rounded-2xl"></div>
+      <div className="w-full h-44 sm:h-56 bg-hover-surface border border-border-custom rounded-2xl"></div>
 
       {/* Header text skeleton */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-900/60 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border-custom pb-6">
         <div className="space-y-3 w-1/3">
-          <div className="h-6 bg-slate-800 rounded w-full"></div>
-          <div className="h-4 bg-slate-800 rounded w-1/2"></div>
+          <div className="h-6 bg-hover-surface rounded w-full"></div>
+          <div className="h-4 bg-hover-surface rounded w-1/2"></div>
         </div>
-        <div className="h-10 bg-slate-800 rounded w-1/4"></div>
+        <div className="h-10 bg-hover-surface rounded w-1/4"></div>
       </div>
 
       {/* Grid skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <div className="h-32 bg-slate-900 rounded-2xl border border-slate-800"></div>
-          <div className="h-44 bg-slate-900 rounded-2xl border border-slate-800"></div>
+          <div className="h-32 bg-surface rounded-2xl border border-border-custom"></div>
+          <div className="h-44 bg-surface rounded-2xl border border-border-custom"></div>
         </div>
-        <div className="lg:col-span-1 h-64 bg-slate-900 rounded-2xl border border-slate-800"></div>
+        <div className="lg:col-span-1 h-64 bg-surface rounded-2xl border border-border-custom"></div>
       </div>
     </div>
   );
