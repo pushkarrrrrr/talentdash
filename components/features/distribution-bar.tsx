@@ -21,7 +21,7 @@ export default function LevelDistributionBar({ levels }: LevelDistributionBarPro
   return (
     <div className="flex flex-col gap-4">
       {/* Stacked Horizontal Bar */}
-      <div className="flex h-5 w-full overflow-hidden rounded-full bg-slate-900 border border-slate-800/80 p-0.5">
+      <div className="flex h-5 w-full overflow-hidden rounded-full bg-slate-900 border border-slate-800/80 p-0.5" aria-hidden="true">
         {distribution.map((item) => {
           const colors = levelColors[item.level] || { bg: 'bg-zinc-500', text: 'text-zinc-400' };
           return (
@@ -36,15 +36,15 @@ export default function LevelDistributionBar({ levels }: LevelDistributionBarPro
       </div>
 
       {/* Legend Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+      <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" aria-label="Level distribution legend">
         {distribution.map((item) => {
           const colors = levelColors[item.level] || { bg: 'bg-zinc-500', text: 'text-zinc-400' };
           return (
-            <div
+            <li
               key={item.level}
               className="flex items-center gap-2.5 bg-slate-950/40 border border-slate-900 rounded-xl p-3"
             >
-              <span className={`h-3 w-3 rounded-full ${colors.bg}`} />
+              <span className={`h-3 w-3 rounded-full ${colors.bg}`} aria-hidden="true" />
               <div className="flex flex-col">
                 <span className="text-xs font-semibold text-slate-200">
                   {item.level === 'Principal' ? 'Principal' : `${item.level} / SDE`}
@@ -53,10 +53,10 @@ export default function LevelDistributionBar({ levels }: LevelDistributionBarPro
                   {item.count} {item.count === 1 ? 'record' : 'records'} ({item.percentage}%)
                 </span>
               </div>
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </div>
   );
 }

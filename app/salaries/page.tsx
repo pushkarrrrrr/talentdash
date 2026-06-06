@@ -47,17 +47,19 @@ export async function generateMetadata({
     description = `Explore tech salaries in ${location}, India. Filter by company, level, and role to negotiate your next offer.`;
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentdash.com';
+
   return {
     title,
     description,
     alternates: {
-      canonical: `/salaries`,
+      canonical: `${siteUrl}/salaries`,
     },
     openGraph: {
       title,
       description,
       type: 'website',
-      url: `/salaries`,
+      url: `${siteUrl}/salaries`,
     },
   };
 }
@@ -206,7 +208,6 @@ async function SalaryDataWrapper({ searchParamsPromise }: { searchParamsPromise:
     <>
       <div className="mb-8 w-full">
         <FilterBar
-          key={`${resolvedParams.company}-${resolvedParams.role}-${resolvedParams.location}-${resolvedParams.level}-${resolvedParams.currency}`}
           roles={uniqueRoles}
           locations={uniqueLocations}
         />
@@ -295,7 +296,15 @@ function PaginationButton({
   if (disabled) {
     return (
       <span className="text-xs font-semibold text-slate-600 bg-slate-950/20 border border-slate-900/50 px-4 py-2 rounded-lg cursor-not-allowed select-none">
-        {direction === 'prev' ? '← Previous' : 'Next →'}
+        {direction === 'prev' ? (
+          <>
+            <span aria-hidden="true">← </span>Previous
+          </>
+        ) : (
+          <>
+            Next<span aria-hidden="true"> →</span>
+          </>
+        )}
       </span>
     );
   }
@@ -318,7 +327,15 @@ function PaginationButton({
       href={`/salaries?${params.toString()}`}
       className="text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 bg-slate-900/40 hover:bg-slate-900/80 px-4 py-2 rounded-lg transition-all"
     >
-      {direction === 'prev' ? '← Previous' : 'Next →'}
+      {direction === 'prev' ? (
+        <>
+          <span aria-hidden="true">← </span>Previous
+        </>
+      ) : (
+        <>
+          Next<span aria-hidden="true"> →</span>
+        </>
+      )}
     </Link>
   );
 }

@@ -3,16 +3,16 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { COMPANIES, SALARY_DATA } from '@/lib/mock-data';
-import { calculateMedian, calculateRange } from '@/lib/math';
+import { COMPANIES, SALARY_DATA, COMPANY_ABOUTS, COMPANY_INSIGHTS, COMPANY_CULTURE_RATINGS, COMPANY_STATS } from '@/lib/mock-data';
+import { Company, SalaryRecord } from '@/types';
+import { calculateMedian } from '@/lib/math';
 import { formatCurrency } from '@/lib/formatters';
 import LevelDistributionBar from '@/components/features/distribution-bar';
 import SalaryTable from '@/components/features/salary-table';
-import TableSkeleton from '@/components/features/table-skeleton';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ sortBy?: string; sortOrder?: 'asc' | 'desc'; currency?: 'INR' | 'USD' }>;
+  searchParams: Promise<{ sortBy?: string; sortOrder?: 'asc' | 'desc'; currency?: 'INR' | 'USD'; tab?: string }>;
 }
 
 // Pre-generate static pages for all companies in the mock seed file
@@ -39,17 +39,39 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const formattedMedian = formatCurrency(medianTC, 'INR');
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentdash.com';
+
   return {
     title: `Software Engineer Salaries at ${company.name} | TalentDash`,
     description: `See what engineers at ${company.name} earn. Median total compensation is ${formattedMedian}. Explore base salaries, stock grants, and bonuses by level.`,
     alternates: {
-      canonical: `/companies/${slug}`,
+      canonical: `${siteUrl}/companies/${slug}`,
     },
     openGraph: {
       title: `Software Engineer Salaries at ${company.name} | TalentDash`,
       description: `Verified compensation data for ${company.name}. Median TC: ${formattedMedian}. Compare salaries and levels.`,
       type: 'website',
-      url: `/companies/${slug}`,
+      url: `${siteUrl}/companies/${slug}`,
+      images: [
+        {
+          url: `/og-image.png`,
+          width: 1200,
+          height: 1200,
+          alt: 'TalentDash compensation explorer',
+        },
+        {
+          url: `https://logo.clearbit.com/${slug}.com`,
+          width: 250,
+          height: 250,
+          alt: `${company.name} Logo`,
+        }
+      ]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Software Engineer Salaries at ${company.name} | TalentDash`,
+      description: `Verified compensation data for ${company.name}. Median TC: ${formattedMedian}. Compare salaries and levels.`,
+      images: [`/og-image.png`],
     },
   };
 }
@@ -64,75 +86,44 @@ export default async function CompanyPage({ params, searchParams }: PageProps) {
   }
 
   const companyRecords = SALARY_DATA.filter((r) => r.companySlug === slug);
-  const recordCount = companyRecords.length;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentdash.com';
+
+  // Build JSON-LD structured data for Google Search (Organization schema)
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: company.name,
+    url: `${siteUrl}/companies/${slug}`,
+    logo: `https://logo.clearbit.com/${slug}.com`,
+    foundingDate: company.foundingYear ? String(company.foundingYear) : undefined,
+    numberOfEmployees: {
+      '@type': 'QuantitativeValue',
+      value: company.headcountRange,
+    },
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: company.headquarters,
+    },
+    description: `Verified compensation data, base salary packages, bonuses, and stock options for software engineering positions at ${company.name}.`,
+  };
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* JSON-LD Rich Snippet script */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
+        }}
+      />
       {/* Back button */}
       <div className="mb-6">
         <Link
-          href="/salaries"
+          href="/"
           className="text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors"
         >
-          ← Back to all salaries
+          <span aria-hidden="true">← </span>Back to Explorer
         </Link>
-      </div>
-
-      {/* Header Profile Section - No searchParams dependency, streams immediately */}
-      <div className="glass-panel rounded-2xl p-6 md:p-8 mb-8 border border-slate-900 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-4 flex-wrap">
-            <div className="shrink-0 w-12 h-12 relative rounded-xl overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center">
-              <Image
-                src={`https://logo.clearbit.com/${slug}.com`}
-                alt={company.name}
-                width={48}
-                height={48}
-                className="object-cover"
-                unoptimized
-              />
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
-                  {company.name}
-                </h1>
-                <span className="text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2.5 py-0.5 rounded-full capitalize">
-                  {company.industry}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-2 mt-2 text-xs text-slate-400">
-            <div>
-              Headquarters:{' '}
-              <span className="font-semibold text-slate-200">{company.headquarters}</span>
-            </div>
-            <div>
-              Headcount:{' '}
-              <span className="font-semibold text-slate-200">{company.headcountRange}</span>
-            </div>
-            <div>
-              Founded:{' '}
-              <span className="font-semibold text-slate-200">{company.foundingYear}</span>
-            </div>
-            <div>
-              Total Records:{' '}
-              <span className="font-semibold text-slate-200">{recordCount}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Compare action button */}
-        <div className="flex items-center md:self-center">
-          <Link
-            href={`/compare?c1=${slug}`}
-            className="w-full md:w-auto text-center text-xs font-semibold text-white bg-sky-600 hover:bg-sky-500 px-5 py-3 rounded-xl shadow-lg shadow-sky-500/10 hover:shadow-sky-500/20 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
-          >
-            Compare Company Offers
-          </Link>
-        </div>
       </div>
 
       <Suspense fallback={<CompanyDynamicSkeleton />}>
@@ -147,29 +138,38 @@ export default async function CompanyPage({ params, searchParams }: PageProps) {
   );
 }
 
-// The dynamic portion of the page that waits for searchParams (currency selection, sorting)
+// The dynamic portion of the page that waits for searchParams (currency selection, sorting, tabs)
 async function CompanyDynamicContent({
   company,
   slug,
   searchParamsPromise,
   companyRecords,
 }: {
-  company: any;
+  company: Company;
   slug: string;
-  searchParamsPromise: Promise<{ sortBy?: string; sortOrder?: 'asc' | 'desc'; currency?: 'INR' | 'USD' }>;
-  companyRecords: any[];
+  searchParamsPromise: Promise<{ sortBy?: string; sortOrder?: 'asc' | 'desc'; currency?: 'INR' | 'USD'; tab?: string }>;
+  companyRecords: SalaryRecord[];
 }) {
   const resolvedSearchParams = await searchParamsPromise;
 
-  const totalComps = companyRecords.map((r) => r.totalCompensation);
-  const recordCount = companyRecords.length;
-  const medianTC = calculateMedian(totalComps);
-  const { min: minTC, max: maxTC } = calculateRange(totalComps);
+  const stats = COMPANY_STATS[slug] || {
+    recordCount: 0,
+    avgTotalComp: 0,
+    maxTotalComp: 0,
+    minTotalComp: 0,
+    medianTotalComp: 0,
+    levels: [],
+  };
+  const recordCount = stats.recordCount;
+  const medianTC = stats.medianTotalComp;
+  const minTC = stats.minTotalComp;
+  const maxTC = stats.maxTotalComp;
 
-  // Sorting & Currency params
+  // Sorting, Currency and Tab params
   const sortBy = resolvedSearchParams.sortBy || 'totalCompensation';
   const sortOrder: 'asc' | 'desc' = resolvedSearchParams.sortOrder === 'asc' ? 'asc' : 'desc';
   const currency: 'INR' | 'USD' = resolvedSearchParams.currency === 'USD' ? 'USD' : 'INR';
+  const tab = resolvedSearchParams.tab || 'overview';
 
   // Sort company records
   const sortedRecords = [...companyRecords].sort((a, b) => {
@@ -190,112 +190,526 @@ async function CompanyDynamicContent({
     return sortOrder === 'asc' ? valA - valB : valB - valA;
   });
 
+  const getTabHref = (tabName: string) => {
+    const params = new URLSearchParams();
+    if (resolvedSearchParams.sortBy) params.set('sortBy', resolvedSearchParams.sortBy);
+    if (resolvedSearchParams.sortOrder) params.set('sortOrder', resolvedSearchParams.sortOrder);
+    if (resolvedSearchParams.currency) params.set('currency', resolvedSearchParams.currency);
+    params.set('tab', tabName);
+    return `/companies/${slug}?${params.toString()}`;
+  };
+
   const getCurrencyHref = (curr: 'INR' | 'USD') => {
     const params = new URLSearchParams();
     if (resolvedSearchParams.sortBy) params.set('sortBy', resolvedSearchParams.sortBy);
     if (resolvedSearchParams.sortOrder) params.set('sortOrder', resolvedSearchParams.sortOrder);
+    if (resolvedSearchParams.tab) params.set('tab', resolvedSearchParams.tab);
     params.set('currency', curr);
     return `/companies/${slug}?${params.toString()}`;
   };
 
+  // Generate stylized logo gradient initials
+  const getGradient = (companySlug: string) => {
+    const gradients = [
+      'from-red-500 to-orange-500',
+      'from-blue-500 to-indigo-500',
+      'from-emerald-500 to-teal-500',
+      'from-purple-500 to-pink-500',
+      'from-amber-500 to-yellow-500',
+      'from-sky-500 to-blue-500',
+    ];
+    const code = companySlug.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return gradients[code % gradients.length];
+  };
+
+  // Mock highly realistic developer-focused insights per company (similar to Levels.fyi top insights)
+  const getTopInsights = (companySlug: string) => {
+    const defaultInsights = [
+      { id: 1, text: 'Typically offers competitive joining cash bonuses to match candidate expectations.', type: 'signing' },
+      { id: 2, text: 'Standard 25% annual vesting schedule for stock grants over 4 years.', type: 'vesting' },
+      { id: 3, text: 'Interview Tip: Focus on core data structures, algorithms, and modular design.', type: 'interview' },
+      { id: 4, text: 'Compensation is benchmarked regularly against tier-1 local product firms.', type: 'salary' }
+    ];
+    return COMPANY_INSIGHTS[companySlug] || defaultInsights;
+  };
+
+  // Mock About paragraphs per company
+  const getAboutText = (comp: Company) => {
+    return COMPANY_ABOUTS[comp.slug] || `${comp.name} is a leading organization in the ${comp.industry} industry. It operates with a headcount of ${comp.headcountRange} and has a strong technical team focusing on scalable systems, engineering operations, and modern cloud deployment architectures.`;
+  };
+
+  // Mock WLB & Culture ratings
+  const getCultureRatings = (companySlug: string) => {
+    const defaultRatings = { wlb: 4.0, growth: 3.8, culture: 4.0, comp: 3.9, mgmt: 3.8 };
+    return COMPANY_CULTURE_RATINGS[companySlug] || defaultRatings;
+  };
+
+  // Dynamic related companies
+  const relatedCompanies = COMPANIES.filter(
+    (c) => c.slug !== slug && (c.industry === company.industry || c.industry.split(' ')[0] === company.industry.split(' ')[0])
+  ).slice(0, 3);
+  if (relatedCompanies.length < 3) {
+    const extra = COMPANIES.filter((c) => c.slug !== slug && !relatedCompanies.includes(c)).slice(0, 3 - relatedCompanies.length);
+    relatedCompanies.push(...extra);
+  }
+
+  // Dynamic Jobs listing
+  const getFeaturedJobs = (comp: Company) => {
+    const ind = comp.industry.toLowerCase();
+    if (ind.includes('payments') || ind.includes('fintech')) {
+      return [
+        { title: 'Senior Security Engineer (Payment Gateways)', loc: 'Bengaluru', exp: '5-8 Yrs' },
+        { title: 'Lead Software Engineer (Go & Microservices)', loc: 'Bengaluru', exp: '6-10 Yrs' }
+      ];
+    }
+    if (ind.includes('e-commerce') || ind.includes('delivery')) {
+      return [
+        { title: 'Staff Software Engineer (High-Throughput APIs)', loc: 'Bengaluru', exp: '8-12 Yrs' },
+        { title: 'Senior Machine Learning Engineer (Recommendations)', loc: 'Bengaluru', exp: '5-7 Yrs' }
+      ];
+    }
+    return [
+      { title: 'Staff Software Engineer (Distributed Systems)', loc: 'Hyderabad', exp: '7-12 Yrs' },
+      { title: 'Senior Frontend Architect (Next.js & Tailwind)', loc: 'Bengaluru', exp: '6-9 Yrs' }
+    ];
+  };
+
+  const insights = getTopInsights(slug);
+  const ratings = getCultureRatings(slug);
+  const jobs = getFeaturedJobs(company);
+
   return (
-    <>
-      {/* Compensation Statistics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="glass-panel rounded-2xl p-6 border border-slate-900 flex flex-col gap-2">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Median Total Comp
-          </span>
-          <span className="text-3xl font-extrabold text-sky-400 tracking-tight">
-            {formatCurrency(medianTC, currency)}
-          </span>
-          <span className="text-[10px] text-slate-500">
-            Calculated dynamically from {recordCount} engineering records
-          </span>
-        </div>
-
-        <div className="glass-panel rounded-2xl p-6 border border-slate-900 flex flex-col gap-2">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Compensation Range
-          </span>
-          <span className="text-2xl font-bold text-slate-200 tracking-tight">
-            {formatCurrency(minTC, currency)} — {formatCurrency(maxTC, currency)}
-          </span>
-          <span className="text-[10px] text-slate-500">
-            Minimum and maximum total compensation values
-          </span>
-        </div>
-
-        <div className="glass-panel rounded-2xl p-6 border border-slate-900 flex flex-col gap-2 justify-center">
-          <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-            <span>Filter Currency</span>
-            <span className="font-semibold text-slate-200 capitalize">{currency}</span>
-          </div>
-          <div className="flex bg-slate-950 border border-slate-900 rounded-xl p-1 w-full">
-            <Link
-              href={getCurrencyHref('INR')}
-              className={`flex-1 text-center py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                currency === 'INR' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              INR (₹)
-            </Link>
-            <Link
-              href={getCurrencyHref('USD')}
-              className={`flex-1 text-center py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                currency === 'USD' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              USD ($)
-            </Link>
+    <div className="space-y-8">
+      {/* 1. Cover Banner & Logo Header Section */}
+      <div className="relative w-full h-44 sm:h-56 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 overflow-hidden border border-slate-900 rounded-2xl shadow-lg">
+        {/* Abstract glowing lights */}
+        <div className="absolute top-0 right-1/4 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute inset-0 bg-slate-950/20 backdrop-blur-[1px]"></div>
+        
+        {/* Logo overlapping the bottom */}
+        <div className={`w-20 h-20 sm:w-24 sm:h-24 absolute -bottom-10 left-6 sm:left-10 rounded-2xl bg-gradient-to-br ${getGradient(slug)} border-4 border-[#030712] shadow-2xl overflow-hidden flex items-center justify-center`}>
+          <div className="w-full h-full relative flex items-center justify-center bg-slate-950/10">
+            <span className="absolute text-xl sm:text-2xl font-extrabold text-white select-none uppercase z-0">
+              {company.name.charAt(0)}
+            </span>
+            <Image
+              src={`/logos/${slug}.svg`}
+              alt={company.name}
+              width={96}
+              height={96}
+              className="object-cover w-full h-full relative z-10"
+              unoptimized
+            />
           </div>
         </div>
       </div>
 
-      {/* Level Distribution Stacked Bar */}
-      <div className="glass-panel rounded-2xl p-6 md:p-8 mb-8 border border-slate-900">
-        <h3 className="text-base font-bold text-slate-200 mb-4 uppercase tracking-wider text-xs">
-          Level Distribution Bar
-        </h3>
-        <LevelDistributionBar levels={companyRecords.map((r) => r.level)} />
+      {/* 2. Profile Details & Horizontal Navigation Tabs */}
+      <div className="pt-10 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-900/60">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
+              {company.name}
+            </h1>
+            <span className="text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2.5 py-0.5 rounded-full capitalize">
+              {company.industry}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1 mt-2 text-xs text-slate-400">
+            <div>
+              Headquarters:{' '}
+              <span className="font-semibold text-slate-200">{company.headquarters}</span>
+            </div>
+            <div>
+              Headcount:{' '}
+              <span className="font-semibold text-slate-200">{company.headcountRange}</span>
+            </div>
+            <div>
+              Founded:{' '}
+              <span className="font-semibold text-slate-200">{company.foundingYear}</span>
+            </div>
+            <div>
+              Total Records:{' '}
+              <span className="font-semibold text-slate-200">{recordCount}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs bar */}
+        <div className="flex bg-slate-950 border border-slate-900 rounded-xl p-1 w-full md:w-auto self-start md:self-end">
+          <Link
+            href={getTabHref('overview')}
+            className={`flex-1 md:flex-none text-center px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
+              tab === 'overview' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Overview
+          </Link>
+          <Link
+            href={getTabHref('salaries')}
+            className={`flex-1 md:flex-none text-center px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
+              tab === 'salaries' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Salaries
+          </Link>
+          <Link
+            href={getTabHref('culture')}
+            className={`flex-1 md:flex-none text-center px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
+              tab === 'culture' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Culture & Benefits
+          </Link>
+        </div>
       </div>
 
-      {/* Embedded filtered Salaries Table */}
-      <div className="flex flex-col gap-4">
-        <h3 className="text-base font-bold text-slate-200 px-1 uppercase tracking-wider text-xs">
-          Compensation Records for {company.name}
-        </h3>
-        <SalaryTable
-          records={sortedRecords}
-          currency={currency}
-          sortBy={sortBy}
-          sortOrder={sortOrder}
-          searchParams={resolvedSearchParams as Record<string, string | string[] | undefined>}
-          basePath={`/companies/${slug}`}
-        />
+      {/* 3. Two-Column Dashboard Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        {/* Main Panel Content (2/3 width) */}
+        <div className="lg:col-span-2 space-y-8">
+          
+          {tab === 'overview' && (
+            /* OVERVIEW TAB CONTENT */
+            <>
+              {/* Top Insights Card */}
+              <div className="glass-panel rounded-2xl p-6 border border-slate-900/60">
+                <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <span aria-hidden="true">💡</span> Top Insights
+                </h3>
+                <div className="space-y-4">
+                  {insights.map((insight) => (
+                    <div key={insight.id} className="flex items-start gap-3 text-xs leading-relaxed text-slate-300">
+                      <span className="text-sky-400 mt-0.5 shrink-0 select-none">
+                        {insight.type === 'signing' && '💰'}
+                        {insight.type === 'vesting' && '📈'}
+                        {insight.type === 'interview' && '📝'}
+                        {insight.type === 'salary' && '📊'}
+                      </span>
+                      <span>{insight.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* About Card */}
+              <div className="glass-panel rounded-2xl p-6 border border-slate-900/60">
+                <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <span aria-hidden="true">🏢</span> About {company.name}
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                  {getAboutText(company)}
+                </p>
+              </div>
+
+              {/* Salaries Overview Summary Card */}
+              <div className="glass-panel rounded-2xl p-6 border border-slate-900/60 space-y-6">
+                <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+                  <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                    <span aria-hidden="true">📊</span> Compensation Summary
+                  </h3>
+                  <Link
+                    href={getTabHref('salaries')}
+                    className="text-[10px] font-bold text-sky-400 hover:text-sky-300"
+                  >
+                    View All Salaries →
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-slate-950/60 border border-slate-900 p-4 rounded-xl flex flex-col justify-between h-[100px]">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Median Total Comp</span>
+                    <span className="text-2xl font-black text-sky-400">{formatCurrency(medianTC, currency)}</span>
+                  </div>
+                  <div className="bg-slate-950/60 border border-slate-900 p-4 rounded-xl flex flex-col justify-between h-[100px]">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Compensation Range</span>
+                    <span className="text-lg font-bold text-slate-200 leading-snug">{formatCurrency(minTC, currency)} - {formatCurrency(maxTC, currency)}</span>
+                  </div>
+                </div>
+
+                {/* Micro Level Distribution Preview */}
+                <div className="space-y-2 pt-2">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Level Distribution Preview</span>
+                  <LevelDistributionBar levels={stats.levels} />
+                </div>
+              </div>
+            </>
+          )}
+
+          {tab === 'salaries' && (
+            /* SALARIES TAB CONTENT */
+            <>
+              {/* Stats & Currency controls */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="glass-panel rounded-2xl p-6 border border-slate-900/60 flex flex-col gap-1.5 justify-center">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Median Total Comp</span>
+                  <span className="text-2xl font-extrabold text-sky-400">{formatCurrency(medianTC, currency)}</span>
+                  <span className="text-[9px] text-slate-500 font-semibold">From {recordCount} engineering records</span>
+                </div>
+                <div className="glass-panel rounded-2xl p-6 border border-slate-900/60 flex flex-col gap-1.5 justify-center">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Compensation Range</span>
+                  <span className="text-xl font-bold text-slate-200">{formatCurrency(minTC, currency)} - {formatCurrency(maxTC, currency)}</span>
+                  <span className="text-[9px] text-slate-500 font-semibold">Min and max verified values</span>
+                </div>
+                <div className="glass-panel rounded-2xl p-4 border border-slate-900/60 flex flex-col gap-2 justify-center">
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 px-1 font-bold">
+                    <span>Currency</span>
+                    <span className="text-sky-400 capitalize">{currency}</span>
+                  </div>
+                  <div className="flex bg-slate-950 border border-slate-900 rounded-xl p-1 w-full">
+                    <Link
+                      href={getCurrencyHref('INR')}
+                      className={`flex-1 text-center py-1 text-xs font-semibold rounded-lg transition-all ${
+                        currency === 'INR' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      INR (₹)
+                    </Link>
+                    <Link
+                      href={getCurrencyHref('USD')}
+                      className={`flex-1 text-center py-1 text-xs font-semibold rounded-lg transition-all ${
+                        currency === 'USD' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      USD ($)
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* Level Distribution Stacked Bar */}
+              <div className="glass-panel rounded-2xl p-6 border border-slate-900/60">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">
+                  Level Distribution Stacked Bar
+                </h3>
+                <LevelDistributionBar levels={stats.levels} />
+              </div>
+
+              {/* Interactive Salaries Table */}
+              <div className="flex flex-col gap-4">
+                <h3 className="text-sm font-bold text-slate-200 px-1 uppercase tracking-wider">
+                  Compensation Records for {company.name}
+                </h3>
+                <SalaryTable
+                  records={sortedRecords}
+                  currency={currency}
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                  searchParams={resolvedSearchParams as Record<string, string | string[] | undefined>}
+                  basePath={`/companies/${slug}`}
+                />
+              </div>
+            </>
+          )}
+
+          {tab === 'culture' && (
+            /* CULTURE & BENEFITS TAB CONTENT */
+            <>
+              {/* Ratings Scores Card */}
+              <div className="glass-panel rounded-2xl p-6 border border-slate-900/60 space-y-6">
+                <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider border-b border-slate-900 pb-3 flex items-center gap-2">
+                  <span aria-hidden="true">⭐</span> Work Culture & Satisfaction
+                </h3>
+
+                <div className="space-y-4">
+                  {/* Rating items */}
+                  {[
+                    { label: 'Work-Life Balance', score: ratings.wlb },
+                    { label: 'Career Growth', score: ratings.growth },
+                    { label: 'Culture & Values', score: ratings.culture },
+                    { label: 'Compensation & Benefits', score: ratings.comp },
+                    { label: 'Management & Leadership', score: ratings.mgmt }
+                  ].map((item) => (
+                    <div key={item.label} className="space-y-1">
+                      <div className="flex justify-between text-xs font-semibold text-slate-300">
+                        <span>{item.label}</span>
+                        <span className="text-sky-400">{item.score.toFixed(1)} / 5.0</span>
+                      </div>
+                      <div 
+                        role="progressbar" 
+                        aria-valuenow={item.score} 
+                        aria-valuemin={0} 
+                        aria-valuemax={5} 
+                        aria-label={item.label}
+                        className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800"
+                      >
+                        <div
+                          className="bg-gradient-to-r from-sky-500 to-indigo-500 h-2 rounded-full"
+                          style={{ width: `${(item.score / 5) * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Perks Grid */}
+              <div className="glass-panel rounded-2xl p-6 border border-slate-900/60 space-y-4">
+                <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider border-b border-slate-900 pb-3 flex items-center gap-2">
+                  <span aria-hidden="true">🎁</span> Perks & Benefits
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold text-slate-300">
+                  <div className="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-start gap-2.5">
+                    <span aria-hidden="true" className="text-lg">🩺</span>
+                    <div>
+                      <div>Comprehensive Health Insurance</div>
+                      <div className="text-[10px] text-slate-500 font-medium mt-0.5">Fully covered medical plan for employee and dependents.</div>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-start gap-2.5">
+                    <span aria-hidden="true" className="text-lg">🍲</span>
+                    <div>
+                      <div>Gourmet Cafeteria & Meals</div>
+                      <div className="text-[10px] text-slate-500 font-medium mt-0.5">Free catered lunches, micro-kitchens with healthy snacks.</div>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-start gap-2.5">
+                    <span aria-hidden="true" className="text-lg">🏡</span>
+                    <div>
+                      <div>Flexible Hybrid Model</div>
+                      <div className="text-[10px] text-slate-500 font-medium mt-0.5">3 days in-office, home-office equipment stipend.</div>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex items-start gap-2.5">
+                    <span aria-hidden="true" className="text-lg">📚</span>
+                    <div>
+                      <div>Learning & Dev Allowance</div>
+                      <div className="text-[10px] text-slate-500 font-medium mt-0.5">Annual education allowance for courses, books, and certs.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+        </div>
+
+        {/* Right Sidebar Column (1/3 width, persistent on all tabs) */}
+        <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-24">
+          
+          {/* Featured Jobs */}
+          <div className="glass-panel border border-slate-900/60 rounded-2xl p-5 shadow-xl space-y-4">
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between border-b border-slate-900 pb-2">
+              <span>Featured Jobs</span>
+              <span className="text-[9px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider select-none">Hiring</span>
+            </h3>
+            
+            <div className="space-y-3.5">
+              {jobs.map((job, idx) => (
+                <div key={idx} className="p-3 bg-slate-950/60 hover:bg-slate-950 border border-slate-900 rounded-xl transition-colors space-y-1.5">
+                  <h4 className="text-xs font-bold text-slate-200 leading-snug hover:text-sky-400 cursor-pointer transition-colors">
+                    {job.title}
+                  </h4>
+                  <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold uppercase">
+                    <span>📍 {job.loc}</span>
+                    <span>⏱️ {job.exp}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <Link
+              href="/"
+              className="block w-full text-center text-xs font-bold text-slate-300 bg-slate-900 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 py-2.5 rounded-xl transition-all"
+            >
+              Search All Openings
+            </Link>
+          </div>
+
+          {/* Related Companies */}
+          <div className="glass-panel border border-slate-900/60 rounded-2xl p-5 shadow-xl space-y-4">
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-900 pb-2">
+              Related Companies
+            </h3>
+
+            <div className="space-y-3">
+              {relatedCompanies.map((rel) => {
+                const relRecords = SALARY_DATA.filter((r) => r.companySlug === rel.slug);
+                const relRate = rel.slug === 'google' ? 4.8 : rel.slug === 'microsoft' ? 4.6 : rel.slug === 'amazon' ? 4.5 : 4.0;
+                return (
+                  <Link
+                    key={rel.slug}
+                    href={`/companies/${rel.slug}`}
+                    className="flex items-center justify-between p-2.5 hover:bg-slate-900/40 border border-transparent hover:border-slate-900 rounded-xl transition-all group"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="h-8 w-8 rounded-lg bg-slate-900 border border-slate-800/80 shadow-sm shrink-0 overflow-hidden relative flex items-center justify-center">
+                        <div className={`absolute inset-0 bg-gradient-to-br ${getGradient(rel.slug)} flex items-center justify-center font-bold text-xs text-white uppercase z-0`}>
+                          {rel.name.charAt(0)}
+                        </div>
+                        <Image
+                          src={`/logos/${rel.slug}.svg`}
+                          alt={rel.name}
+                          width={32}
+                          height={32}
+                          className="object-cover w-full h-full relative z-10"
+                          unoptimized
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-300 group-hover:text-sky-400 transition-colors truncate">
+                          {rel.name}
+                        </div>
+                        <div className="text-[9px] text-slate-500 font-medium">
+                          ★ {relRate.toFixed(1)} • {relRecords.length} Salary records
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-slate-500 group-hover:text-sky-400 transition-colors text-xs">→</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Negotiate offer CTA */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-sky-950/30 to-slate-950 border border-sky-500/20 hover:border-sky-500/30 transition-all flex flex-col gap-3 shadow-lg shadow-indigo-950/5">
+            <h4 className="text-xs font-bold text-slate-100 uppercase tracking-wider flex items-center gap-1.5">
+              <span aria-hidden="true">💼</span> Competing Offer?
+            </h4>
+            <p className="text-[11px] text-slate-400 leading-relaxed font-semibold">
+              Vetted offer evaluations suggest candidates with competing offers at {company.name} negotiate up to <span className="text-emerald-400">18% higher base salaries</span>.
+            </p>
+            <Link
+              href="/compare"
+              className="w-full text-center text-xs font-bold text-white bg-sky-600 hover:bg-sky-500 px-4 py-2.5 rounded-xl shadow-lg shadow-sky-500/20 hover:shadow-sky-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+            >
+              Negotiate Offer Package
+            </Link>
+          </div>
+
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
-// Skeletons to prevent layout shift while searchParams is awaited
+// Dynamic Skeletons for tab content & profile details loading states
 function CompanyDynamicSkeleton() {
   return (
-    <div className="animate-pulse">
-      {/* Stats Grid Skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="glass-panel rounded-2xl p-6 border border-slate-900 h-[120px] bg-slate-950/40"></div>
-        <div className="glass-panel rounded-2xl p-6 border border-slate-900 h-[120px] bg-slate-950/40"></div>
-        <div className="glass-panel rounded-2xl p-6 border border-slate-900 h-[120px] bg-slate-950/40"></div>
+    <div className="animate-pulse space-y-8">
+      {/* Cover skeleton */}
+      <div className="w-full h-44 sm:h-56 bg-slate-900 border border-slate-800 rounded-2xl"></div>
+
+      {/* Header text skeleton */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-900/60 pb-6">
+        <div className="space-y-3 w-1/3">
+          <div className="h-6 bg-slate-800 rounded w-full"></div>
+          <div className="h-4 bg-slate-800 rounded w-1/2"></div>
+        </div>
+        <div className="h-10 bg-slate-800 rounded w-1/4"></div>
       </div>
 
-      {/* Level Distribution Skeleton */}
-      <div className="glass-panel rounded-2xl p-6 md:p-8 mb-8 border border-slate-900 h-[140px] bg-slate-950/40"></div>
-
-      {/* Table Skeleton */}
-      <div className="flex flex-col gap-4">
-        <div className="h-4 bg-slate-800 rounded w-1/4 mb-2"></div>
-        <TableSkeleton />
+      {/* Grid skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="h-32 bg-slate-900 rounded-2xl border border-slate-800"></div>
+          <div className="h-44 bg-slate-900 rounded-2xl border border-slate-800"></div>
+        </div>
+        <div className="lg:col-span-1 h-64 bg-slate-900 rounded-2xl border border-slate-800"></div>
       </div>
     </div>
   );

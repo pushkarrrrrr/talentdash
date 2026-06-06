@@ -38,6 +38,22 @@ export default function FilterBar({ roles, locations }: FilterBarProps) {
   // Input states
   const [companyInput, setCompanyInput] = useState(initialCompany);
 
+  // Sync state when URL params change during render (avoids useEffect setState rule)
+  const [prevCompanyInUrl, setPrevCompanyInUrl] = useState(initialCompany);
+  if (initialCompany !== prevCompanyInUrl) {
+    setCompanyInput(initialCompany);
+    setPrevCompanyInUrl(initialCompany);
+  }
+
+  const currentLevelsInUrl = getInitialLevels();
+  const [prevLevelsInUrl, setPrevLevelsInUrl] = useState(currentLevelsInUrl);
+  const levelsMatch = currentLevelsInUrl.length === prevLevelsInUrl.length &&
+                      currentLevelsInUrl.every((lvl, idx) => lvl === prevLevelsInUrl[idx]);
+  if (!levelsMatch) {
+    setSelectedLevels(currentLevelsInUrl);
+    setPrevLevelsInUrl(currentLevelsInUrl);
+  }
+
   // Helper to construct and push new query parameters
   const updateURL = useCallback((updates: Record<string, string | string[] | null>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -115,6 +131,7 @@ export default function FilterBar({ roles, locations }: FilterBarProps) {
             {companyInput && (
               <button
                 onClick={() => setCompanyInput('')}
+                aria-label="Clear company search"
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 text-sm"
               >
                 ✕
@@ -164,14 +181,15 @@ export default function FilterBar({ roles, locations }: FilterBarProps) {
         </div>
 
         {/* Currency Toggle */}
-        <div className="flex flex-col gap-2 md:col-span-2">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+        <div className="flex flex-col gap-2 md:col-span-2" role="group" aria-labelledby="currency-toggle-label">
+          <span id="currency-toggle-label" className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
             Currency
-          </label>
+          </span>
           <div className="flex bg-slate-950 border border-slate-800 rounded-xl p-1 w-full">
             <button
               onClick={() => updateURL({ currency: 'INR' })}
-              className={`flex-1 text-center py-1.5 text-xs font-semibold rounded-lg transition-all ${
+              aria-pressed={initialCurrency === 'INR'}
+              className={`flex-1 text-center py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                 initialCurrency === 'INR'
                   ? 'bg-sky-600 text-white shadow-md'
                   : 'text-slate-400 hover:text-slate-200'
@@ -181,7 +199,8 @@ export default function FilterBar({ roles, locations }: FilterBarProps) {
             </button>
             <button
               onClick={() => updateURL({ currency: 'USD' })}
-              className={`flex-1 text-center py-1.5 text-xs font-semibold rounded-lg transition-all ${
+              aria-pressed={initialCurrency === 'USD'}
+              className={`flex-1 text-center py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                 initialCurrency === 'USD'
                   ? 'bg-sky-600 text-white shadow-md'
                   : 'text-slate-400 hover:text-slate-200'
@@ -194,8 +213,8 @@ export default function FilterBar({ roles, locations }: FilterBarProps) {
       </div>
 
       {/* Level Selection checklist as premium chips */}
-      <div className="flex flex-col gap-3">
-        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+      <div className="flex flex-col gap-3" role="group" aria-labelledby="level-filter-label">
+        <span id="level-filter-label" className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
           Filter by Level
         </span>
         <div className="flex flex-wrap gap-2.5">
@@ -205,6 +224,7 @@ export default function FilterBar({ roles, locations }: FilterBarProps) {
               <button
                 key={lvl}
                 onClick={() => toggleLevel(lvl)}
+                aria-pressed={isSelected}
                 className={`px-4 py-2 text-xs font-semibold rounded-xl border transition-all duration-200 cursor-pointer ${
                   isSelected
                     ? 'bg-sky-500/10 text-sky-400 border-sky-500/40 shadow-sm shadow-sky-500/5'

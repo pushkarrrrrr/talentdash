@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
+  <rect width="24" height="24" rx="4" fill="#006699"/>
+  <text x="12" y="14" font-family="Courier New, monospace" font-weight="900" font-size="9" fill="#FFFFFF" text-anchor="middle">IBM</text>
+  <line x1="2" y1="8" x2="22" y2="8" stroke="#006699" stroke-width="1.5"/>
+  <line x1="2" y1="12" x2="22" y2="12" stroke="#006699" stroke-width="1.5"/>
+</svg>

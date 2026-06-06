@@ -7,8 +7,11 @@ export default function Navigation() {
   const pathname = usePathname();
 
   const links = [
+    { href: '/', label: 'Companies' },
     { href: '/salaries', label: 'Salaries' },
     { href: '/compare', label: 'Compare' },
+    { href: '/locations', label: 'Locations' },
+    { href: '/t', label: 'Titles' },
   ];
 
   return (
@@ -16,7 +19,7 @@ export default function Navigation() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/salaries" className="flex items-center gap-2 group">
+            <Link href="/" className="flex items-center gap-2 group">
               <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent group-hover:opacity-90 transition-opacity">
                 TalentDash
               </span>
@@ -24,9 +27,9 @@ export default function Navigation() {
                 Beta
               </span>
             </Link>
-            <nav className="hidden md:flex items-center gap-1">
+            <nav aria-label="Desktop Navigation" className="hidden md:flex items-center gap-1">
               {links.map((link) => {
-                const isActive = pathname.startsWith(link.href);
+                const isActive = link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
                 return (
                   <Link
                     key={link.href}
@@ -62,9 +65,9 @@ export default function Navigation() {
       </div>
       
       {/* Mobile navigation row (visible on small screens) */}
-      <div className="md:hidden border-t border-slate-800/40 bg-slate-950/80 flex justify-around py-2">
+      <nav aria-label="Mobile Navigation" className="md:hidden border-t border-slate-800/40 bg-slate-950/80 flex justify-around py-2">
         {links.map((link) => {
-          const isActive = pathname.startsWith(link.href);
+          const isActive = link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
           return (
             <Link
               key={link.href}
@@ -79,7 +82,7 @@ export default function Navigation() {
             </Link>
           );
         })}
-      </div>
+      </nav>
     </header>
   );
 }

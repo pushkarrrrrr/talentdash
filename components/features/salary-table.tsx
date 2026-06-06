@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import CompanyLogo from './company-logo';
 import { SalaryRecord } from '@/types';
 import { formatCurrency, formatExperience } from '@/lib/formatters';
 
@@ -86,24 +86,39 @@ export default function SalaryTable({
   return (
     <div className="w-full overflow-x-auto rounded-xl border border-slate-900 bg-slate-950/40 backdrop-blur-sm">
       <table className="w-full min-w-[900px] border-collapse text-left text-sm text-slate-300">
+        <caption className="sr-only">
+          Verified technology salary packages showing company, designation role, level, metro location, years of experience, base salary package, stock options, and total compensation.
+        </caption>
         <thead className="border-b border-slate-900 bg-slate-950/80 text-xs font-semibold uppercase tracking-wider text-slate-400">
           <tr>
-            <th className="px-6 py-4">Company</th>
-            <th className="px-6 py-4">Role</th>
-            <th className="px-6 py-4">Level</th>
-            <th className="px-6 py-4">Location</th>
-            <th className="px-6 py-4">
+            <th scope="col" className="px-6 py-4">Company</th>
+            <th scope="col" className="px-6 py-4">Role</th>
+            <th scope="col" className="px-6 py-4">Level</th>
+            <th scope="col" className="px-6 py-4">Location</th>
+            <th 
+              scope="col" 
+              className="px-6 py-4"
+              aria-sort={sortBy === 'experienceYears' ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
+            >
               <Link href={getSortHref('experienceYears')} className="group flex items-center hover:text-slate-200 transition-colors">
                 Experience {renderSortIndicator('experienceYears')}
               </Link>
             </th>
-            <th className="px-6 py-4">
+            <th 
+              scope="col" 
+              className="px-6 py-4"
+              aria-sort={sortBy === 'baseSalary' ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
+            >
               <Link href={getSortHref('baseSalary')} className="group flex items-center hover:text-slate-200 transition-colors">
                 Base Salary {renderSortIndicator('baseSalary')}
               </Link>
             </th>
-            <th className="px-6 py-4">Stock</th>
-            <th className="px-6 py-4">
+            <th scope="col" className="px-6 py-4">Stock</th>
+            <th 
+              scope="col" 
+              className="px-6 py-4"
+              aria-sort={sortBy === 'totalCompensation' ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
+            >
               <Link href={getSortHref('totalCompensation')} className="group flex items-center hover:text-slate-200 transition-colors">
                 Total Comp {renderSortIndicator('totalCompensation')}
               </Link>
@@ -123,13 +138,11 @@ export default function SalaryTable({
                   className="group/link flex items-center gap-3 transition-colors"
                 >
                   <div className="relative shrink-0 w-6 h-6 rounded-md overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center">
-                    <Image
-                      src={`https://logo.clearbit.com/${record.companySlug}.com`}
-                      alt={record.company}
+                    <CompanyLogo
+                      companySlug={record.companySlug}
+                      companyName={record.company}
                       width={24}
                       height={24}
-                      className="object-cover"
-                      unoptimized // Because it's an external placeholder that can fail
                     />
                   </div>
                   <span className="font-semibold text-slate-100 group-hover/link:text-sky-400 group-hover/link:underline transition-colors min-w-0 break-words line-clamp-2">

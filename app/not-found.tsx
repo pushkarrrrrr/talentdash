@@ -1,4 +1,13 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Page Not Found | TalentDash',
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function NotFound() {
   return (
@@ -12,7 +21,7 @@ export default function NotFound() {
         <h2 className="text-2xl font-bold text-slate-100 mt-4">Page Not Found</h2>
         
         <p className="text-base text-slate-400 max-w-md">
-          We couldn't find the page or company you're looking for. The link might be broken, or the record may have been removed.
+          We couldn&apos;t find the page or company you&apos;re looking for. The link might be broken, or the record may have been removed.
         </p>
         
         <Link

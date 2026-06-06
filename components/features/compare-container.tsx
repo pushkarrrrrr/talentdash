@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SalaryRecord, Currency } from '@/types';
 import { formatCurrency, formatExperience, formatDelta } from '@/lib/formatters';
@@ -20,6 +20,14 @@ export default function CompareContainer({ records }: CompareContainerProps) {
 
   // Currency selection state
   const [currency, setCurrency] = useState<Currency>(Currency.INR);
+
+  // Memoize select options to avoid formatting currency for 65 entries * 2 selectors on every state change/render
+  const selectOptions = useMemo(() => {
+    return records.map((r) => ({
+      id: r.id,
+      label: `${r.company} · ${r.role} (${r.level}) · ${formatCurrency(r.totalCompensation, 'INR')}`,
+    }));
+  }, [records]);
 
   // Resolve Record A
   let recordA: SalaryRecord | null = null;
@@ -115,9 +123,9 @@ export default function CompareContainer({ records }: CompareContainerProps) {
             onChange={(e) => handleSelectA(e.target.value)}
             className="w-full bg-slate-950/80 border border-slate-800 focus:border-sky-500 rounded-xl px-4 py-3 text-sm outline-none transition-all text-slate-200"
           >
-            {records.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.company} · {r.role} ({r.level}) · {formatCurrency(r.totalCompensation, 'INR')}
+            {selectOptions.map((opt) => (
+              <option key={opt.id} value={opt.id}>
+                {opt.label}
               </option>
             ))}
           </select>
@@ -134,9 +142,9 @@ export default function CompareContainer({ records }: CompareContainerProps) {
             onChange={(e) => handleSelectB(e.target.value)}
             className="w-full bg-slate-950/80 border border-slate-800 focus:border-sky-500 rounded-xl px-4 py-3 text-sm outline-none transition-all text-slate-200"
           >
-            {records.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.company} · {r.role} ({r.level}) · {formatCurrency(r.totalCompensation, 'INR')}
+            {selectOptions.map((opt) => (
+              <option key={opt.id} value={opt.id}>
+                {opt.label}
               </option>
             ))}
           </select>
@@ -150,9 +158,10 @@ export default function CompareContainer({ records }: CompareContainerProps) {
         </div>
         
         {/* Currency Switcher */}
-        <div className="flex bg-slate-950 border border-slate-900 rounded-xl p-0.5 w-36">
+        <div role="group" aria-label="Currency Switcher" className="flex bg-slate-950 border border-slate-900 rounded-xl p-0.5 w-36">
           <button
             onClick={() => setCurrency(Currency.INR)}
+            aria-pressed={currency === Currency.INR}
             className={`flex-1 text-center py-1 text-[10px] font-bold rounded-lg transition-all cursor-pointer ${
               currency === Currency.INR ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
             }`}
@@ -161,6 +170,7 @@ export default function CompareContainer({ records }: CompareContainerProps) {
           </button>
           <button
             onClick={() => setCurrency(Currency.USD)}
+            aria-pressed={currency === Currency.USD}
             className={`flex-1 text-center py-1 text-[10px] font-bold rounded-lg transition-all cursor-pointer ${
               currency === Currency.USD ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
             }`}
@@ -173,18 +183,21 @@ export default function CompareContainer({ records }: CompareContainerProps) {
       {/* Side by Side Comparison Grid */}
       <div className="w-full overflow-x-auto rounded-2xl border border-slate-900 bg-slate-950/40 backdrop-blur-sm shadow-2xl">
         <table className="w-full min-w-[750px] border-collapse text-left text-sm text-slate-300">
+          <caption className="sr-only">
+            Side-by-side compensation package comparisons and calculated deltas between Offer A and Offer B.
+          </caption>
           <thead className="border-b border-slate-900 bg-slate-950/80 text-xs font-semibold uppercase tracking-wider text-slate-400">
             <tr>
-              <th className="px-6 py-4">Field</th>
-              <th className="px-6 py-4 w-1/3">Offer A ({recordA.company})</th>
-              <th className="px-6 py-4 w-1/3">Offer B ({recordB.company})</th>
-              <th className="px-6 py-4 w-1/4">Delta (A - B)</th>
+              <th scope="col" className="px-6 py-4">Field</th>
+              <th scope="col" className="px-6 py-4 w-1/3">Offer A ({recordA.company})</th>
+              <th scope="col" className="px-6 py-4 w-1/3">Offer B ({recordB.company})</th>
+              <th scope="col" className="px-6 py-4 w-1/4">Delta (A - B)</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-900/60 bg-slate-950/20">
             {/* Company */}
             <tr className="hover:bg-slate-900/10">
-              <td className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase">Company</td>
+              <th scope="row" className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase text-left font-normal">Company</th>
               <td className="px-6 py-4 font-bold text-slate-100">{recordA.company}</td>
               <td className="px-6 py-4 font-bold text-slate-100">{recordB.company}</td>
               <td className="px-6 py-4 text-slate-500">—</td>
@@ -192,7 +205,7 @@ export default function CompareContainer({ records }: CompareContainerProps) {
 
             {/* Role */}
             <tr className="hover:bg-slate-900/10">
-              <td className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase">Role</td>
+              <th scope="row" className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase text-left font-normal">Role</th>
               <td className="px-6 py-4 text-slate-200 font-medium">{recordA.role}</td>
               <td className="px-6 py-4 text-slate-200 font-medium">{recordB.role}</td>
               <td className="px-6 py-4 text-slate-500">—</td>
@@ -200,7 +213,7 @@ export default function CompareContainer({ records }: CompareContainerProps) {
 
             {/* Level */}
             <tr className="hover:bg-slate-900/10">
-              <td className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase">Level</td>
+              <th scope="row" className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase text-left font-normal">Level</th>
               <td className="px-6 py-4">
                 <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getLevelBadgeStyles(recordA.level)}`}>
                   {recordA.level}
@@ -216,7 +229,7 @@ export default function CompareContainer({ records }: CompareContainerProps) {
 
             {/* Location */}
             <tr className="hover:bg-slate-900/10">
-              <td className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase">Location</td>
+              <th scope="row" className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase text-left font-normal">Location</th>
               <td className="px-6 py-4 capitalize">{recordA.location}</td>
               <td className="px-6 py-4 capitalize">{recordB.location}</td>
               <td className="px-6 py-4 text-slate-500">—</td>
@@ -224,7 +237,7 @@ export default function CompareContainer({ records }: CompareContainerProps) {
 
             {/* Experience */}
             <tr className="hover:bg-slate-900/10">
-              <td className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase">Experience</td>
+              <th scope="row" className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase text-left font-normal">Experience</th>
               <td className="px-6 py-4 font-mono">{formatExperience(recordA.experienceYears)}</td>
               <td className="px-6 py-4 font-mono">{formatExperience(recordB.experienceYears)}</td>
               <td className="px-6 py-4 font-mono">
@@ -240,7 +253,7 @@ export default function CompareContainer({ records }: CompareContainerProps) {
 
             {/* Base Salary */}
             <tr className="hover:bg-slate-900/10">
-              <td className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase">Base Salary</td>
+              <th scope="row" className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase text-left font-normal">Base Salary</th>
               <td className="px-6 py-4 font-mono text-slate-200">{formatCurrency(recordA.baseSalary, currency)}</td>
               <td className="px-6 py-4 font-mono text-slate-200">{formatCurrency(recordB.baseSalary, currency)}</td>
               <td className="px-6 py-4 font-mono font-semibold">
@@ -256,7 +269,7 @@ export default function CompareContainer({ records }: CompareContainerProps) {
 
             {/* Bonus */}
             <tr className="hover:bg-slate-900/10">
-              <td className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase">Bonus</td>
+              <th scope="row" className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase text-left font-normal">Bonus</th>
               <td className="px-6 py-4 font-mono text-slate-400">{formatCurrency(recordA.bonus, currency)}</td>
               <td className="px-6 py-4 font-mono text-slate-400">{formatCurrency(recordB.bonus, currency)}</td>
               <td className="px-6 py-4 font-mono font-semibold">
@@ -272,7 +285,7 @@ export default function CompareContainer({ records }: CompareContainerProps) {
 
             {/* Stock */}
             <tr className="hover:bg-slate-900/10">
-              <td className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase">Stock Options</td>
+              <th scope="row" className="px-6 py-4 font-semibold text-slate-400 text-xs uppercase text-left font-normal">Stock Options</th>
               <td className="px-6 py-4 font-mono text-slate-400">{formatCurrency(recordA.stock, currency)}</td>
               <td className="px-6 py-4 font-mono text-slate-400">{formatCurrency(recordB.stock, currency)}</td>
               <td className="px-6 py-4 font-mono font-semibold">
@@ -288,7 +301,7 @@ export default function CompareContainer({ records }: CompareContainerProps) {
 
             {/* Total Comp */}
             <tr className="hover:bg-slate-900/20 bg-slate-900/5">
-              <td className="px-6 py-5 font-semibold text-slate-300 text-xs uppercase">Total Comp</td>
+              <th scope="row" className="px-6 py-5 font-semibold text-slate-300 text-xs uppercase text-left font-normal">Total Comp</th>
               <td className="px-6 py-5 font-mono text-lg font-extrabold text-[#0369A1]">
                 <div className="flex flex-col gap-1">
                   <span>{formatCurrency(recordA.totalCompensation, currency)}</span>

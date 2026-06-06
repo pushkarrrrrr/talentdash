@@ -8,9 +8,9 @@ export default function Footer() {
             <span>Real-time, verified engineering compensation metrics.</span>
           </div>
           <div className="flex items-center gap-6">
-            <a href="/salaries" className="hover:text-slate-300 transition-colors">Privacy Policy</a>
-            <a href="/salaries" className="hover:text-slate-300 transition-colors">Terms of Service</a>
-            <a href="/salaries" className="hover:text-slate-300 transition-colors">Contact Support</a>
+            <a href="#privacy" className="hover:text-slate-300 transition-colors">Privacy Policy</a>
+            <a href="#terms" className="hover:text-slate-300 transition-colors">Terms of Service</a>
+            <a href="#contact" className="hover:text-slate-300 transition-colors">Contact Support</a>
           </div>
         </div>
         <div className="mt-8 border-t border-slate-900/60 pt-8 text-[11px] text-slate-600">

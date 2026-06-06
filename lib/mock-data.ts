@@ -987,3 +987,160 @@ export const SALARY_DATA: SalaryRecord[] = [
     totalCompensation: 4200000
   }
 ];
+
+// Centralized company metadata maps (Ratings, reviews, followers, descriptions, insights, culture rating sub-scores)
+export const COMPANY_RATINGS: Record<string, number> = {
+  google: 4.8,
+  microsoft: 4.6,
+  amazon: 4.5,
+  flipkart: 4.3,
+  swiggy: 4.1,
+  zomato: 4.2,
+  razorpay: 4.4,
+  tcs: 3.3,
+  infosys: 3.5,
+  'ibm-consulting-services-india-pvt-ltd': 3.7,
+  'talentdash-inc': 5.0,
+};
+
+export const COMPANY_REVIEWS: Record<string, number> = {
+  google: 12400,
+  microsoft: 8900,
+  amazon: 15600,
+  flipkart: 6200,
+  swiggy: 4300,
+  zomato: 5100,
+  razorpay: 1200,
+  tcs: 124000,
+  infosys: 84000,
+  'ibm-consulting-services-india-pvt-ltd': 34000,
+  'talentdash-inc': 42,
+};
+
+export const COMPANY_FOLLOWERS: Record<string, number> = {
+  google: 45000,
+  microsoft: 38000,
+  amazon: 52000,
+  flipkart: 24000,
+  swiggy: 15000,
+  zomato: 18000,
+  razorpay: 9500,
+  tcs: 250000,
+  infosys: 180000,
+  'ibm-consulting-services-india-pvt-ltd': 95000,
+  'talentdash-inc': 1200,
+};
+
+export const COMPANY_ABOUTS: Record<string, string> = {
+  google: 'Google India operates major engineering centers in Bengaluru and Hyderabad. The engineering groups work on core search infrastructure, cloud systems, artificial intelligence models, YouTube backend engineering, and next-generation developer tooling.',
+  amazon: 'Amazon India has a massive developer presence across Bengaluru, Hyderabad, Chennai, and Gurugram. The engineering groups own features for retail global platforms, AWS databases, Kindle, Prime Video backend streaming, and warehouse automation systems.',
+  microsoft: 'Microsoft India Development Center (IDC) has engineering offices in Hyderabad, Bengaluru, and Noida. The teams lead development for Azure Cloud Services, Windows core architectures, Microsoft 365, and AI models within the Microsoft Copilot engineering teams.',
+  tcs: 'Tata Consultancy Services (TCS) is India\'s largest IT services exporter. TCS research labs and engineering groups deliver large-scale digital transformation projects, enterprise databases, and bespoke consulting services globally.',
+  infosys: 'Infosys is a pioneer in consulting, technology, outsourcing, and digital services. Infosys engineering teams deploy cloud infrastructure, enterprise software, and artificial intelligence solutions globally.',
+  'talentdash-inc': 'TalentDash Inc. is a high-growth HR tech startup building next-generation compensation intelligence, salary comparison trackers, and offer negotiation assistants for engineering talent worldwide.'
+};
+
+export interface CompanyInsight {
+  id: number;
+  text: string;
+  type: 'signing' | 'vesting' | 'interview' | 'salary';
+}
+
+export const COMPANY_INSIGHTS: Record<string, CompanyInsight[]> = {
+  google: [
+    { id: 1, text: 'Offers upfront sign-on bonus paid in the first month salary cycle.', type: 'signing' },
+    { id: 2, text: 'Uniform 25% annual stock vesting schedule (no backloading).', type: 'vesting' },
+    { id: 3, text: 'Interview Tip: Focus heavily on LeetCode Medium/Hard, system design, and Googliness behavioral scenarios.', type: 'interview' },
+    { id: 4, text: 'Highly flexible base pay with substantial annual stock refresher grants.', type: 'salary' }
+  ],
+  amazon: [
+    { id: 1, text: 'Typically offsets backloaded vesting with guaranteed signing bonuses in Years 1 & 2 (paid monthly).', type: 'signing' },
+    { id: 2, text: 'Backloaded vesting schedule: 5% Year 1, 15% Year 2, 40% Year 3, 40% Year 4.', type: 'vesting' },
+    { id: 3, text: 'Interview Tip: Prepare 2 detailed examples for each of Amazon\'s 16 Leadership Principles using the STAR method.', type: 'interview' },
+    { id: 4, text: 'Base salary is generally capped around ₹40L-₹45L in India; remainder is stock/bonus.', type: 'salary' }
+  ],
+  microsoft: [
+    { id: 1, text: 'Upfront cash signing bonuses with a standard 1-year clawback agreement.', type: 'signing' },
+    { id: 2, text: '25% annual vesting schedule over 4 years.', type: 'vesting' },
+    { id: 3, text: 'Interview Tip: Brush up on thread safety, low-level concurrency, system design, and algorithmic problem solving.', type: 'interview' },
+    { id: 4, text: 'Moderate base packages compensated by stable performance cash bonuses and stock awards.', type: 'salary' }
+  ],
+  flipkart: [
+    { id: 1, text: 'Offers highly competitive joining bonuses to match top product firms.', type: 'signing' },
+    { id: 2, text: 'Equal 25% annual vesting timeline.', type: 'vesting' },
+    { id: 3, text: 'Interview Tip: Focus on machine coding rounds, clean object-oriented architecture, and scalable system design.', type: 'interview' },
+    { id: 4, text: 'Top packages are highly aligned with tier-1 MNC levels.', type: 'salary' }
+  ]
+};
+
+export interface CultureRatings {
+  wlb: number;
+  growth: number;
+  culture: number;
+  comp: number;
+  mgmt: number;
+}
+
+export const COMPANY_CULTURE_RATINGS: Record<string, CultureRatings> = {
+  google: { wlb: 4.5, growth: 4.6, culture: 4.8, comp: 4.7, mgmt: 4.4 },
+  amazon: { wlb: 3.2, growth: 4.5, culture: 3.9, comp: 4.6, mgmt: 3.7 },
+  microsoft: { wlb: 4.3, growth: 4.1, culture: 4.4, comp: 4.3, mgmt: 4.1 },
+  flipkart: { wlb: 3.8, growth: 4.3, culture: 4.1, comp: 4.2, mgmt: 3.9 },
+  tcs: { wlb: 4.0, growth: 3.1, culture: 3.5, comp: 2.8, mgmt: 3.2 },
+  'talentdash-inc': { wlb: 4.8, growth: 5.0, culture: 4.9, comp: 5.0, mgmt: 4.9 }
+};
+
+export interface CompanyStats {
+  recordCount: number;
+  avgTotalComp: number;
+  maxTotalComp: number;
+  minTotalComp: number;
+  medianTotalComp: number;
+  levels: Level[];
+}
+
+export const COMPANY_STATS: Record<string, CompanyStats> = {};
+
+// Precompute stats once globally on module load
+COMPANIES.forEach((company) => {
+  const companyRecords = SALARY_DATA.filter((r) => r.companySlug === company.slug);
+  const recordCount = companyRecords.length;
+  
+  if (recordCount === 0) {
+    COMPANY_STATS[company.slug] = {
+      recordCount: 0,
+      avgTotalComp: 0,
+      maxTotalComp: 0,
+      minTotalComp: 0,
+      medianTotalComp: 0,
+      levels: [],
+    };
+    return;
+  }
+
+  const totalComps = companyRecords.map((r) => r.totalCompensation);
+  const totalCompSum = totalComps.reduce((sum, val) => sum + val, 0);
+  const avgTotalComp = Math.round(totalCompSum / recordCount);
+  const maxTotalComp = Math.max(...totalComps);
+  const minTotalComp = Math.min(...totalComps);
+
+  // Compute Median
+  const sorted = [...totalComps].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  const medianTotalComp = sorted.length % 2 !== 0 
+    ? sorted[mid] 
+    : Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+
+  const levels = companyRecords.map((r) => r.level);
+
+  COMPANY_STATS[company.slug] = {
+    recordCount,
+    avgTotalComp,
+    maxTotalComp,
+    minTotalComp,
+    medianTotalComp,
+    levels,
+  };
+});
+
+
